@@ -5,9 +5,11 @@ const state = {
 const mutations = {
     login (state, payload) {
         state.mcid = payload.mcid;
+        state.uuid = payload.uuid;
     },
     logout (state) {
         state.mcid = null;
+        state.uuid = null;
     }
 };
 

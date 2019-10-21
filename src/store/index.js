@@ -12,7 +12,7 @@ export default new Vuex.Store({
     strict: true,
     plugins: [createPersistedState({
         key: "SkyblockAuction",
-        paths: ["auth.mcid"],
+        paths: ["auth.mcid", "auth.uuid"],
         storage: window.sessionStorage
     })],
 });

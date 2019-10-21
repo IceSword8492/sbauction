@@ -18,17 +18,10 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item">
+                        <li class="nav-item" v-if="!user || (user && user.length && user.length === 0)">
                             <a class="nav-link" href="/login">Login</a>
                         </li>
-                        <!-- <li class="nav-item dropdown">
-                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {{ user }} <img :src="`https://avatar.minecraft.jp/${user}/minecraft/l.png`" width="20px" height="20px" /><span class="caret"></span>
-                            </a>
-
-                            
-                        </li> -->
-                        <v-menu offset-y>
+                        <v-menu offset-y v-if="user && user.length && user.length !== 0">
                             <template v-slot:activator="{ on }">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-on="on">
                                     {{ user }} <img :src="`https://avatar.minecraft.jp/${user}/minecraft/l.png`" width="20px" height="20px" /><span class="caret"></span>
@@ -67,13 +60,6 @@ export default {
     data: function () {
         return {
             user: this.$mcid,
-            items: [
-                {
-                    "title": "a"
-                }
-            ],
-            menu: "",
-            tooltip: ""
         };
     },
     methods: {

@@ -16,6 +16,7 @@
     "bootstrap-vue": "^2.0.4",
     "jquery": "^3.4.1",
     "popper.js": "^1.16.0",
+    "request-promise": "^4.2.4",
     "serve": "^11.2.0",
     "sqlite-async": "^1.0.12",
     "sqlite3": "^4.1.0",
