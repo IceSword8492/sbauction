@@ -1,28 +1,102 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+    <v-app id="app">
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    Skyblock Auction
+                </a>
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/login">Login</a>
+                        </li>
+                        <!-- <li class="nav-item dropdown">
+                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ user }} <img :src="`https://avatar.minecraft.jp/${user}/minecraft/l.png`" width="20px" height="20px" /><span class="caret"></span>
+                            </a>
+
+                            
+                        </li> -->
+                        <v-menu offset-y>
+                            <template v-slot:activator="{ on }">
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-on="on">
+                                    {{ user }} <img :src="`https://avatar.minecraft.jp/${user}/minecraft/l.png`" width="20px" height="20px" /><span class="caret"></span>
+                                </a>
+                            </template>
+                            <v-list>
+                                <v-list-item>
+                                    <v-list-item-title
+                                        @click="logout"
+                                    >Logout</v-list-item-title>
+                                </v-list-item>
+                            </v-list>
+                        </v-menu>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <main class="py-4">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <router-view />
+                </div>
+            </div>
+        </main>
+    </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import sbAuctions from "./components/sbAuctions.vue"
 
 export default {
-  name: 'app',
-  components: {
-    HelloWorld
-  }
+    name: 'app',
+    components: {
+        sbAuctions
+    },
+    data: function () {
+        return {
+            user: this.$mcid,
+            items: [
+                {
+                    "title": "a"
+                }
+            ],
+            menu: "",
+            tooltip: ""
+        };
+    },
+    methods: {
+        logout: function () {
+            this.$store.commit({
+                type: "logout"
+            });
+            location.href = "/";
+        }
+    }
 }
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+}
+
+.navbar {
+    padding: 0;
 }
 </style>
