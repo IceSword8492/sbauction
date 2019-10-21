@@ -5,7 +5,7 @@
     			v-for="(auction, index) in cards"
     			:key="index"
     			xs="12"
-    			sm="12"
+    			sm="2"
     			md="2"
     			lg="2"
     			class="v-application"
