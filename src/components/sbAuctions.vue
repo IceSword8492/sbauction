@@ -9,6 +9,7 @@
     			md="3"
     			lg="2"
     			class="v-application"
+				ref="cards"
     		>
 				<v-card
 					style="width: 100%;"
@@ -49,11 +50,8 @@
 export default {
     data: function () {
     	return {
-			cards: []
+			cards: [],
     	};
-	},
-	computed: {
-
 	},
 	methods: {
 		mouse_enter: function (e) {
@@ -113,7 +111,10 @@ export default {
 		},
 	},
 	created: async function () {
-		this.$data.cards = (await this.$axios.get("/api/v1/search")).data
+		this.$data.cards = (await this.$axios.get("/api/v1/search")).data;
+		setInterval(() =>  {
+			this.$forceUpdate();
+		}, 500);
 	},
 }
 </script>
