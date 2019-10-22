@@ -1,5 +1,6 @@
 const state = {
-    token: ""
+    mcid: null,
+    uuid: null,
 };
 
 const mutations = {

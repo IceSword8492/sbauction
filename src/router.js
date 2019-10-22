@@ -1,6 +1,8 @@
 import Router from "vue-router"
 import sbAuctions from "./components/sbAuctions.vue"
 import login from "./components/login.vue"
+import logout from "./components/logout.vue"
+import home from "./components/home.vue"
 
 export default new Router({
     mode: "history",
@@ -20,15 +22,15 @@ export default new Router({
             name: "/register",
             component: null,
         },
-        { // no in use
+        {
             path: "/logout",
             name: "/logout",
-            component: null
+            component: logout
         },
         {
             path: "/home",
             name: "/home",
-            component: null,
+            component: home,
             meta: {
                 requiresAuth: true
             }

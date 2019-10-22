@@ -3,7 +3,7 @@
         class="mx-auto col-10"
     >
         <v-card-title>
-            Login
+            Home
         </v-card-title>
         <v-card-text>
                 <v-text-field
@@ -38,7 +38,7 @@ export default {
                     mcid: res.data.match(/<<(?<mcid>(?:(?!<<|>>).)+)>>/).groups.mcid,
                     uuid: res.data.match(/{{(?<uuid>(?:(?!{{|}}).)+)}}/).groups.uuid,
                 });
-                // this.$router.push("/");
+                this.$auth.login();
                 location.href = "/";
             } else {
                 alert("f");
