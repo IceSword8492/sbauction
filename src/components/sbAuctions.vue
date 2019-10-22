@@ -117,12 +117,12 @@ export default {
 				break;
 			}
 			return ((tier_color) + name + "\n\n" + lore)
-				.replace(/§k((?:(?!§[0-9a-f]).)*)/g, `<span>$1</span>`) // 未対応
+				.replace(/§k((?:(?!§[0-9a-z]).)*)/g, `<span>$1</span>`) // 未対応
 				.replace(/§l((?:(?!§[0-9a-z]).)*)/g, `<span style="font-weight: bold">$1</span>`)
-				.replace(/§m((?:(?!§[0-9a-f]).)*)/g, `<span style="text-decoration: line-through">$1</span>`)
-				.replace(/§n((?:(?!§[0-9a-f]).)*)/g, `<span style="text-decoration: underline">$1</span>`)
-				.replace(/§o((?:(?!§[0-9a-f]).)*)/g, `<span style="font-style: italic">$1</span>`)
-				.replace(/§r((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #ffffff; font-style: normal; font-weight: normal; text-decoration: none;">$1</span>`)
+				.replace(/§m((?:(?!§[0-9a-z]).)*)/g, `<span style="text-decoration: line-through">$1</span>`)
+				.replace(/§n((?:(?!§[0-9a-z]).)*)/g, `<span style="text-decoration: underline">$1</span>`)
+				.replace(/§o((?:(?!§[0-9a-z]).)*)/g, `<span style="font-style: italic">$1</span>`)
+				.replace(/§r((?:(?!§[0-9a-z]).)*)/g, `<span style="color: #ffffff; font-style: normal; font-weight: normal; text-decoration: none;">$1</span>`)
 				.replace(/§0((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #000000">$1</span>`)
 				.replace(/§1((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #0000aa">$1</span>`)
 				.replace(/§2((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #00aa00">$1</span>`)

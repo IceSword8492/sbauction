@@ -11,6 +11,7 @@
                     :error-messages="errorMcid"
                     label="Minecraft ID"
                     required
+                    ref="mcid"
                 />
         </v-card-text>
         <v-card-actions>
@@ -31,7 +32,6 @@ export default {
     methods: {
         login: async function () {
             let res = await this.$axios.get("/api/v1/auth/" + this.$data.mcid);
-            console.log(res.data);
             if (res.data.indexOf("success") === 0) {
                 this.$store.commit({
                     type: "login",
@@ -44,6 +44,15 @@ export default {
                 return false;
             }
         }
-    }
+    },
+    mounted: function () {
+        this.$refs.mcid.focus();
+        this.$refs.mcid.$el.addEventListener("keypress", e => {
+            let key = e.which || e.keyCode;
+            if (key === 13) { // enter
+                this.login();
+            }
+        });
+    },
 }
 </script>

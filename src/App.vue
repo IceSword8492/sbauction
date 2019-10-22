@@ -5,38 +5,38 @@
                 <a class="navbar-brand" href="/">
                     Skyblock Auction
                 </a>
-                <button
-                    class="navbar-toggler"
-                    type="button"
-                    data-toggle="collapse"
-                    data-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation"
-                >
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item" v-if="!user || (user && user.length && user.length === 0)">
-                            <a class="nav-link" href="/login">Login</a>
-                        </li>
-                        <v-menu offset-y v-if="user && user.length && user.length !== 0">
-                            <template v-slot:activator="{ on }">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-on="on">
-                                    {{ user }} <img :src="`https://avatar.minecraft.jp/${user}/minecraft/l.png`" width="20px" height="20px" /><span class="caret"></span>
-                                </a>
-                            </template>
-                            <v-list>
-                                <v-list-item>
-                                    <v-list-item-title
-                                        @click="logout"
-                                    >Logout</v-list-item-title>
-                                </v-list-item>
-                            </v-list>
-                        </v-menu>
-                    </ul>
-                </div>
+                    <button
+                        class="navbar-toggler"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation"
+                    >
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item" v-if="!user || (user && user.length && user.length === 0)">
+                                <a class="nav-link" href="/login">Login</a>
+                            </li>
+                            <v-menu offset-y v-if="user && user.length && user.length !== 0">
+                                <template v-slot:activator="{ on }">
+                                    <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-on="on">
+                                        {{ user }} <img :src="`https://avatar.minecraft.jp/${user}/minecraft/l.png`" width="20px" height="20px" /><span class="caret"></span>
+                                    </a>
+                                </template>
+                                <v-list>
+                                    <v-list-item>
+                                        <v-list-item-title
+                                            @click="logout"
+                                        >Logout</v-list-item-title>
+                                    </v-list-item>
+                                </v-list>
+                            </v-menu>
+                        </ul>
+                    </div>
             </div>
         </nav>
         <main class="py-4">
