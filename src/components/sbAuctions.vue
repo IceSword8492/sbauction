@@ -48,6 +48,9 @@
 
 <script>
 export default {
+	props: {
+		query: String,
+	},
     data: function () {
     	return {
 			cards: [],
@@ -111,7 +114,7 @@ export default {
 		},
 	},
 	created: async function () {
-		this.$data.cards = (await this.$axios.get("/api/v1/search")).data;
+		this.$data.cards = (await this.$axios.get("/api/v1/search?query=" + (this.query || "sort:price.desc"))).data;
 		setInterval(() =>  {
 			this.$forceUpdate();
 		}, 500);

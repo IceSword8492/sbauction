@@ -69,6 +69,7 @@
                     <v-text-field
                         v-model="search"
                         label="Search"
+                        append-icon="mdi-search-web"
                     />
                     <v-list-item v-if="!user || (user && user.length && user.length === 0)" to="login">
                         <v-list-item-title>Login</v-list-item-title>
