@@ -18,9 +18,10 @@
                 <v-text-field
                     v-model="search"
                     label="Search"
-                    style="margin-top: 15px;"
+                    style="margin-top: 15px; margin-right: 10px;"
                     class="hidden-sm-and-down"
                     single-line
+                    append-icon="mdi-search-web"
                 />
                 <v-btn class="nav-item hidden-sm-and-down" text v-if="!user || (user && user.length && user.length === 0)" to="/login">
                     <span class="nav-link" to="/login">Login</span>

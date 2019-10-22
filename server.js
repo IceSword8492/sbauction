@@ -23,6 +23,13 @@ const server = http.createServer(async (request, response) => {
         response.end();
         return;
     }
+    if (request.url.indexOf("/api/v1/search") === 0) {
+        let res = JSON.stringify(all_auctions.filter((auction, index) => index < 10));
+        response.writeHead(200, {"Content-Type": "application/json"});
+        response.write(res);
+        response.end();
+        return;
+    }
     return handler(request, response, {
         public: "./dist",
         rewrites: [
@@ -57,3 +64,43 @@ const listener = server.listen(process.env.PORT || 3000, _ => console.log("liste
 //         break;
 //     }
 // }, 1);
+
+let all_auctions = [];
+let sortMethod = sort_bid_amount_desc;
+
+update();
+setInterval(function () {
+    update();
+}, 60000);
+
+async function update () {
+    let totalPages = 1;
+    let auctions = JSON.parse(await rp.get("https://api.hypixel.net/skyblock/auctions?key=f20bce2b-d8a4-4c97-ac90-ea5c732f8d25"));
+
+    totalPages = auctions.totalPages;
+
+    all_auctions = merge(all_auctions, auctions.auctions, "uuid");
+
+    all_auctions.sort(sortMethod);
+    for (let page = 2; page < totalPages; page++) {
+        auctions = JSON.parse(await rp.get("https://api.hypixel.net/skyblock/auctions?key=f20bce2b-d8a4-4c97-ac90-ea5c732f8d25&page=" + page));
+        all_auctions = merge(all_auctions, auctions.auctions, "uuid");
+        all_auctions.sort(sortMethod);
+    }
+}
+
+function merge (a, b, p) {
+    return Object.values([...a, ...b]
+        .reduce((obj, it) => {
+            obj[it[p]] = it;
+            return obj;
+        }, {}));
+}
+
+function sort_bid_amount_desc (a, b) {
+    return (b.highest_bid_amount || b.starting_bid) - (a.highest_bid_amount || a.starting_bid);
+}
+
+function sort_bid_amount_asc (a, b) {
+    return (a.highest_bid_amount || a.starting_bid) - (b.highest_bid_amount || b.starting_bid);
+}

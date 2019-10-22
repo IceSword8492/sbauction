@@ -49,45 +49,13 @@
 export default {
     data: function () {
     	return {
-			auctions: [],
-			sortMethod: this.sort_bid_amount_desc,
-			limit: 48,
+			cards: []
     	};
 	},
 	computed: {
-		cards: function () {
-			return this.$data.auctions.filter((auction, index) => index < this.$data.limit);
-		},
+
 	},
 	methods: {
-		mergeData: async function () {
-			let totalPages = 1;
-			let auctions = (await this.$axios.get("/api/v1/auctions/1")).data;
-
-			totalPages = auctions.totalPages;
-
-			this.$data.auctions = this.merge(this.$data.auctions, auctions.auctions, "uuid");
-
-			this.$data.auctions.sort(this.sortMethod);
-			for (let page = 2; page < totalPages; page++) {
-				auctions = (await this.$axios.get("/api/v1/auctions/" + page)).data;
-				this.$data.auctions = this.merge(this.$data.auctions, auctions.auctions, "uuid");
-				this.$data.auctions.sort(this.sortMethod);
-			}
-		},
-		merge: function (a, b, p) {
-			return Object.values([...a, ...b]
-				.reduce((obj, it) => {
-					obj[it[p]] = it;
-					return obj;
-				}, {}));
-		},
-		sort_bid_amount_desc: function (a, b) {
-			return (b.highest_bid_amount || b.starting_bid) - (a.highest_bid_amount || a.starting_bid);
-		},
-		sort_bid_amount_asc: function (a, b) {
-			return (a.highest_bid_amount || a.starting_bid) - (b.highest_bid_amount || b.starting_bid);
-		},
 		mouse_enter: function (e) {
 			document.getElementById("item_lore").innerHTML = e.target.getElementsByClassName("item_lore")[0].innerHTML;
 			document.getElementById("item_lore").style.visibility = "visible";
@@ -144,11 +112,8 @@ export default {
 				
 		},
 	},
-	created: function () {
-		this.mergeData();
-		setInterval(_ => {
-			this.mergeData();
-		}, 60000);
+	created: async function () {
+		this.$data.cards = (await this.$axios.get("/api/v1/search")).data
 	},
 }
 </script>
