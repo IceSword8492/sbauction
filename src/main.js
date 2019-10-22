@@ -39,6 +39,10 @@ router.beforeEach((to, from, next) => {
 new Vue({
 	router,
 	store,
-	vuetify: new Vuetify({}),
+	vuetify: new Vuetify({
+		theme: {
+			dark: true,
+		},
+	}),
 	render: function (h) { return h(App) },
 }).$mount('#app');

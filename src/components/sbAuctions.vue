@@ -26,12 +26,13 @@
 							v-text="auction.item_name"
 						/>
 					</v-img>
-					<div class="my-4 subtitle-1 black--text">
+					<div class="my-4 subtitle-1">
 						{{ auction.end - new Date().getTime() > 0 ? (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) > 99 ? Math.floor((auction.end - new Date().getTime()) / 1000 / 3600 / 24) + " days" : (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 3600)).padStart(2, "0") + "h" : "") + (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) || Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60)).padStart(2, "0") + "m" : "") + ("" + Math.floor((auction.end - new Date().getTime()) / 1000 % 60)).padStart(2, "0") + "s")  : "Ended!" }}
 					</div>
 					<v-divider class="mx-4" />
 					<v-card-actions>
-						₡{{ ("" + (auction.highest_bid_amount || auction.starting_bid)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') }}
+						<span v-if="$vuetify.theme.dark" style="color: #ffaa00">₡{{ ("" + (auction.highest_bid_amount || auction.starting_bid)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') }}</span>
+						<span v-else>₡{{ ("" + (auction.highest_bid_amount || auction.starting_bid)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') }}</span>
 						<v-spacer />
 						<v-btn icon>
 							<v-icon>mdi-heart</v-icon>

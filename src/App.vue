@@ -1,51 +1,50 @@
 <template>
     <v-app id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-            <div class="container">
-                <v-list>
-                    <v-list-item class="navbar-brand" @click="$route.path !== '/' ? $router.push('/') : null">
-                        <span class="font-weight-light grey--text">Skyblock</span> <span class="grey--text">Auction</span>
-                    </v-list-item>
-                </v-list>
-                <button
-                    class="navbar-toggler"
-                    type="button"
-                    data-toggle="collapse"
-                    data-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation"
+        <nav>
+            <v-toolbar flat dense>
+                <v-toolbar-title @click="$route.path !== '/' ? $router.push('/') : null" style="cursor: pointer;">
+                    <span class="font-weight-light grey--text">Skyblock</span> <span class="grey--text">Auction</span>
+                </v-toolbar-title>
+                <v-spacer />
+                <v-spacer />
+                <v-spacer />
+                <v-spacer />
+                <v-btn icon
                     @click.stop="drawer = !drawer"
+                    class="hidden-md-and-up"
                 >
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <v-list class="navbar-nav ml-auto" style="padding: 0;">
-                        <v-list-item class="nav-item" v-if="!user || (user && user.length && user.length === 0)" to="/login" style="min-height: 0;">
-                            <span class="nav-link" to="/login">Login</span>
+                    <v-icon>mdi-menu</v-icon>
+                </v-btn>
+                <v-text-field
+                    v-model="search"
+                    label="Search"
+                    style="margin-top: 15px;"
+                    class="hidden-sm-and-down"
+                    single-line
+                />
+                <v-btn class="nav-item hidden-sm-and-down" text v-if="!user || (user && user.length && user.length === 0)" to="/login">
+                    <span class="nav-link" to="/login">Login</span>
+                </v-btn>
+                <v-menu offset-y v-if="user && user.length && user.length !== 0" class="hidden-sm-and-down">
+                    <template v-slot:activator="{ on }">
+                        <v-btn text id="navbarDropdown" class="nav-link dropdown-toggle grey--text hidden-sm-and-down" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-on="on">
+                            {{ user }} <img :src="`https://avatar.minecraft.jp/${user}/minecraft/l.png`" width="20px" height="20px" /><span class="caret"></span>
+                        </v-btn>
+                    </template>
+                    <v-list>
+                        <v-list-item to="home">
+                            <v-list-item-title
+                            >Home</v-list-item-title>
                         </v-list-item>
-                        <v-menu offset-y v-if="user && user.length && user.length !== 0">
-                            <template v-slot:activator="{ on }">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-on="on">
-                                    {{ user }} <img :src="`https://avatar.minecraft.jp/${user}/minecraft/l.png`" width="20px" height="20px" /><span class="caret"></span>
-                                </a>
-                            </template>
-                            <v-list>
-                                <v-list-item to="home">
-                                    <v-list-item-title
-                                    >Home</v-list-item-title>
-                                </v-list-item>
-                                <v-list-item to="logout">
-                                    <!-- gが切れるためheight指定 -->
-                                    <v-list-item-title
-                                        style="height: 20px"
-                                    >Logout</v-list-item-title>
-                                </v-list-item>
-                            </v-list>
-                        </v-menu>
+                        <v-list-item to="logout">
+                            <!-- gが切れるためheight指定 -->
+                            <v-list-item-title
+                                style="height: 20px"
+                            >Logout</v-list-item-title>
+                        </v-list-item>
                     </v-list>
-                </div>
-            </div>
+                </v-menu>
+            </v-toolbar>
         </nav>
         <v-navigation-drawer
             v-model="drawer"
@@ -60,13 +59,19 @@
                     v-model="group"
                     active-class="text--accent-4"
                 >
+                    <div style="margin: 10px 0;">
+                        <span class="font-weight-light grey--text">Skyblock</span> <span class="grey--text">Auction</span>
+                    </div>
+                    <div v-if="user && user.length && user.length !== 0" style="margin: 10px 0;">
+                        <span>{{ user }} <img :src="`https://avatar.minecraft.jp/${user}/minecraft/l.png`" width="20px" height="20px" /></span>
+                    </div>
+                    <v-text-field
+                        v-model="search"
+                        label="Search"
+                    />
                     <v-list-item v-if="!user || (user && user.length && user.length === 0)" to="login">
                         <v-list-item-title>Login</v-list-item-title>
                     </v-list-item>
-                    <div v-if="user && user.length && user.length !== 0" style="margin: 10px 0;">
-                        <span class="font-weight-light grey--text">Skyblock</span> <span class="grey--text">Auction</span><br /><br />
-                        <span>{{ user }} <img :src="`https://avatar.minecraft.jp/${user}/minecraft/l.png`" width="20px" height="20px" /></span>
-                    </div>
                     <v-list-item v-if="user && user.length && user.length !== 0" to="home">
                         <v-list-item-title>Home</v-list-item-title>
                     </v-list-item>
@@ -77,11 +82,16 @@
             </v-list>
         </v-navigation-drawer>
         <main class="py-4">
-            <div class="container">
+            <!-- <div class="container">
                 <div class="row justify-content-center">
                     <router-view />
                 </div>
-            </div>
+            </div> -->
+            <v-container id="custom-container" fluid>
+                <v-row>
+                    <router-view />
+                </v-row>
+            </v-container>
         </main>
     </v-app>
 </template>
@@ -98,7 +108,8 @@ export default {
         return {
             user: this.$mcid,
             drawer: false,
-            group: null
+            group: null,
+            search: ""
         };
     },
     methods: {
@@ -131,6 +142,40 @@ export default {
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
+}
+
+#custom-container {
+    max-width: 1900px;
+}
+
+@media (max-width: 599px) {
+    #custom-container {
+        max-width: 95%;
+    }
+}
+
+@media (min-width: 600px) {
+    #custom-container {
+        max-width: 580px;
+    }
+}
+
+@media (min-width: 960px) {
+    #custom-container {
+        max-width: 940px;
+    }
+}
+
+@media (min-width: 1264px) {
+    #custom-container {
+        max-width: 1150px;
+    }
+}
+
+@media (min-width: 1904px) {
+    #custom-container {
+        max-width: 1600px;
+    }
 }
 
 .navbar {

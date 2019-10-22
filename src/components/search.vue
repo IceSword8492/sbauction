@@ -3,7 +3,7 @@
         class="mx-auto col-12"
     >
         <v-card-title>
-            Home
+            Search
         </v-card-title>
     </v-card>
 </template>
@@ -12,7 +12,7 @@
 export default {
     data: function () {
         return {
-
+            
         };
     },
     methods: {

@@ -3,7 +3,7 @@
         class="mx-auto col-12"
     >
         <v-card-title>
-            Home
+            Title
         </v-card-title>
     </v-card>
 </template>

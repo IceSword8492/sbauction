@@ -3,6 +3,7 @@ import sbAuctions from "./components/sbAuctions.vue"
 import login from "./components/login.vue"
 import logout from "./components/logout.vue"
 import home from "./components/home.vue"
+import search from "./components/search.vue"
 
 export default new Router({
     mode: "history",
@@ -17,10 +18,10 @@ export default new Router({
             name: "login",
             component: login,
         },
-        { // not in use
-            path: "/register",
-            name: "/register",
-            component: null,
+        {
+            path: "/search",
+            name: "/search",
+            component: search,
         },
         {
             path: "/logout",

@@ -12,6 +12,7 @@
                     label="Minecraft ID"
                     required
                     ref="mcid"
+                    autofocus
                 />
         </v-card-text>
         <v-card-actions>
@@ -47,7 +48,6 @@ export default {
         }
     },
     mounted: function () {
-        this.$refs.mcid.focus();
         this.$refs.mcid.$el.addEventListener("keypress", e => {
             let key = e.which || e.keyCode;
             if (key === 13) { // enter
