@@ -153,7 +153,6 @@ const server = http.createServer(async (request, response) => {
                 continue;
             }
         }
-        console.log(query, page);
         result = result.filter((auction, index) => {
             if (index >= page * 48 && index < (page + 1) * 48) {
                 return true;
