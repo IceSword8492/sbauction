@@ -15,12 +15,12 @@ export default new Router({
             name: "login",
             component: login,
         },
-        {
+        { // not in use
             path: "/register",
             name: "/register",
             component: null,
         },
-        {
+        { // no in use
             path: "/logout",
             name: "/logout",
             component: null

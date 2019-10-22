@@ -69,6 +69,17 @@ export default {
             });
             location.href = "/";
         }
+    },
+    created: function () {
+        let stalker = document.createElement("div");
+        stalker.id = "stalker";
+        stalker.style.zIndex = "9999";
+        stalker.style.position = "fixed";
+        stalker.innerHTML = `<div id="pointer"></div><div id="item_lore">ITEMLORE</div>`;
+        document.body.insertBefore(stalker, document.body.firstChild);
+        document.addEventListener("mousemove", function (e) {
+            stalker.style.transform = `translate(${e.clientX}px,${e.clientY}px)`;
+        });
     }
 }
 </script>
@@ -84,5 +95,37 @@ export default {
 
 .navbar {
     padding: 0;
+}
+
+/* #stalker > #pointer {
+    pointer-events: none;
+    position: fixed;
+    top: -8px;
+    left: -8px;
+    width: 16px;
+    height: 16px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    transform: translate(0,0);
+    transition: transform 0.2s;
+    transition-timing-function: ease-out;
+    z-index: 999;
+} */
+
+/* html, body, a {
+    cursor: none !important;
+} */
+
+#stalker > #item_lore {
+    position: absolute;
+    top: -40px;
+    left: 30px;
+    visibility: hidden;
+    width: 300px;
+    background-color: #110110;
+    border-radius: 5px;
+    outline: solid 2px #24015b;
+    outline-offset: -4px;
+    padding: 5px;
 }
 </style>

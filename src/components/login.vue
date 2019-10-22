@@ -35,7 +35,7 @@ export default {
             if (res.data.indexOf("success") === 0) {
                 this.$store.commit({
                     type: "login",
-                    mcid: this.$data.mcid,
+                    mcid: res.data.match(/<<(?<mcid>(?:(?!<<|>>).)+)>>/).groups.mcid,
                     uuid: res.data.match(/{{(?<uuid>(?:(?!{{|}}).)+)}}/).groups.uuid,
                 });
                 location.href = "/";

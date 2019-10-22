@@ -12,6 +12,8 @@
     		>
 				<v-card
 					style="width: 100%;"
+					@mouseenter="mouse_enter"
+					@mouseleave="mouse_leave"
 				>
 					<v-img
 						:src="auction.img"
@@ -25,7 +27,7 @@
 						/>
 					</v-img>
 					<div class="my-4 subtitle-1 black--text">
-						Ended!
+						{{ auction.end - new Date().getTime() > 0 ? (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) > 99 ? Math.floor((auction.end - new Date().getTime()) / 1000 / 3600 / 24) + " days" : (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 3600)).padStart(2, "0") + "h" : "") + (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) || Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60)).padStart(2, "0") + "m" : "") + ("" + Math.floor((auction.end - new Date().getTime()) / 1000 % 60)).padStart(2, "0") + "s")  : "Ended!" }}
 					</div>
 					<v-divider class="mx-4" />
 					<v-card-actions>
@@ -35,6 +37,7 @@
 							<v-icon>mdi-heart</v-icon>
 						</v-btn>
 					</v-card-actions>
+					<div class="item_lore" style="position: fixed; visibility: hidden;" v-html="lore_converter(auction.item_name, auction.tier, auction.item_lore)"></div>
 				</v-card>
     		</v-col>
     	</v-row>
@@ -62,18 +65,12 @@ export default {
 
 			totalPages = auctions.totalPages;
 
-			this.$data.auctions = this.merge(this.$data.auctions, auctions.auctions.map(auction => {
-				auction.item_lore = auction.item_lore.replace(/\r?\n/g, "<br />");
-				return auction;
-			}), "uuid");
+			this.$data.auctions = this.merge(this.$data.auctions, auctions.auctions, "uuid");
 
 			this.$data.auctions.sort(this.sortMethod);
 			for (let page = 2; page < totalPages; page++) {
 				auctions = (await this.$axios.get("/api/v1/auctions/" + page)).data;
-				this.$data.auctions = this.merge(this.$data.auctions, auctions.auctions.map(auction => {
-				auction.item_lore = auction.item_lore.replace(/\r?\n/g, "<br />");
-				return auction;
-			}), "uuid");
+				this.$data.auctions = this.merge(this.$data.auctions, auctions.auctions, "uuid");
 				this.$data.auctions.sort(this.sortMethod);
 			}
 		},
@@ -89,7 +86,62 @@ export default {
 		},
 		sort_bid_amount_asc: function (a, b) {
 			return (a.highest_bid_amount || a.starting_bid) - (b.highest_bid_amount || b.starting_bid);
-		}
+		},
+		mouse_enter: function (e) {
+			document.getElementById("item_lore").innerHTML = e.target.getElementsByClassName("item_lore")[0].innerHTML;
+			document.getElementById("item_lore").style.visibility = "visible";
+		},
+		mouse_leave: function (e) {
+			document.getElementById("item_lore").style.visibility = "hidden";
+		},
+		lore_converter: function (name, tier, lore) {
+			let tier_color = "§r";
+			switch (tier.toLowerCase()) {
+			case "common":
+				tier_color = "§f";
+				break;
+			case "uncommon":
+				tier_color = "§2";
+				break;
+			case "rare":
+				tier_color = "§9";
+				break;
+			case "epic":
+				tier_color = "§5";
+				break;
+			case "legendary":
+				tier_color = "§6";
+				break;
+			case "special":
+				tier_color = "§d";
+				break;
+			}
+			return ((tier_color) + name + "\n\n" + lore)
+				.replace(/§k((?:(?!§[0-9a-f]).)*)/g, `<span>$1</span>`) // 未対応
+				.replace(/§l((?:(?!§[0-9a-z]).)*)/g, `<span style="font-weight: bold">$1</span>`)
+				.replace(/§m((?:(?!§[0-9a-f]).)*)/g, `<span style="text-decoration: line-through">$1</span>`)
+				.replace(/§n((?:(?!§[0-9a-f]).)*)/g, `<span style="text-decoration: underline">$1</span>`)
+				.replace(/§o((?:(?!§[0-9a-f]).)*)/g, `<span style="font-style: italic">$1</span>`)
+				.replace(/§r((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #ffffff; font-style: normal; font-weight: normal; text-decoration: none;">$1</span>`)
+				.replace(/§0((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #000000">$1</span>`)
+				.replace(/§1((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #0000aa">$1</span>`)
+				.replace(/§2((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #00aa00">$1</span>`)
+				.replace(/§3((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #00aaaa">$1</span>`)
+				.replace(/§4((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #aa0000">$1</span>`)
+				.replace(/§5((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #aa00aa">$1</span>`)
+				.replace(/§6((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #ffaa00">$1</span>`)
+				.replace(/§7((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #aaaaaa">$1</span>`)
+				.replace(/§8((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #555555">$1</span>`)
+				.replace(/§9((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #5555ff">$1</span>`)
+				.replace(/§a((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #55ff55">$1</span>`)
+				.replace(/§b((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #55ffff">$1</span>`)
+				.replace(/§c((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #ff5555">$1</span>`)
+				.replace(/§d((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #ff55ff">$1</span>`)
+				.replace(/§e((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #ffff55">$1</span>`)
+				.replace(/§f((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #ffffff">$1</span>`)
+				.replace(/\r?\n/g, "<br />");
+				
+		},
 	},
 	created: function () {
 		this.mergeData();
