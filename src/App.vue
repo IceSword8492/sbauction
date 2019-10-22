@@ -18,7 +18,7 @@
                 <v-text-field
                     v-model="search"
                     label="Search"
-                    style="margin-top: 15px; margin-right: 10px;"
+                    style="margin-top: 22px; margin-right: 10px;"
                     class="hidden-sm-and-down"
                     single-line
                     append-icon="mdi-search-web"
@@ -183,24 +183,24 @@ export default {
     padding: 0;
 }
 
-/* #stalker > #pointer {
-    pointer-events: none;
-    position: fixed;
-    top: -8px;
-    left: -8px;
-    width: 16px;
-    height: 16px;
-    background: rgba(0,0,0,0.5);
-    border-radius: 50%;
-    transform: translate(0,0);
-    transition: transform 0.2s;
-    transition-timing-function: ease-out;
-    z-index: 999;
-} */
+// #stalker > #pointer {
+//     pointer-events: none;
+//     position: fixed;
+//     top: -8px;
+//     left: -8px;
+//     width: 16px;
+//     height: 16px;
+//     background: rgba(0,0,0,0.5);
+//     border-radius: 50%;
+//     transform: translate(0,0);
+//     transition: transform 0.2s;
+//     transition-timing-function: ease-out;
+//     z-index: 999;
+// }
 
-/* html, body, a {
-    cursor: none !important;
-} */
+// * {
+//     cursor: none !important;
+// }
 
 #stalker > #item_lore {
     position: absolute;
