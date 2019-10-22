@@ -29,7 +29,7 @@
                 <v-menu offset-y v-if="user && user.length && user.length !== 0" class="hidden-sm-and-down">
                     <template v-slot:activator="{ on }">
                         <v-btn text id="navbarDropdown" class="nav-link dropdown-toggle grey--text hidden-sm-and-down" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-on="on">
-                            {{ user }} <img :src="`https://avatar.minecraft.jp/${user}/minecraft/l.png`" width="20px" height="20px" /><span class="caret"></span>
+                            {{ user }} <img :src="`https://avatar.minecraft.jp/${user}/minecraft/l.png`" width="20px" height="20px" style="margin-left: 5px; margin-right: 3px;" /><span class="caret"></span>
                         </v-btn>
                     </template>
                     <v-list>
@@ -183,23 +183,35 @@ export default {
     padding: 0;
 }
 
-#stalker > #pointer {
-    pointer-events: none;
-    position: fixed;
-    top: -8px;
-    left: -8px;
-    width: 16px;
-    height: 16px;
-    background: rgba(0,0,0,0.5);
-    border-radius: 50%;
-    transform: translate(0,0);
-    transition: transform 0.2s;
-    transition-timing-function: ease-out;
-    z-index: 999;
+@media (max-width: 599px) {
+    #stalker > #pointer {
+        visibility: hidden;
+    }
+
+    * {
+        cursor: default;
+    }
 }
 
-* {
-    cursor: none !important;
+@media (min-width: 600px) {
+    #stalker > #pointer {
+        pointer-events: none;
+        position: fixed;
+        top: -8px;
+        left: -8px;
+        width: 16px;
+        height: 16px;
+        background: rgba(0,0,0,0.5);
+        border-radius: 50%;
+        transform: translate(0,0);
+        transition: transform 0.2s;
+        transition-timing-function: ease-out;
+        z-index: 999;
+    }
+
+    * {
+        cursor: none !important;
+    }
 }
 
 #stalker > #item_lore {
