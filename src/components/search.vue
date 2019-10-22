@@ -11,6 +11,8 @@
                     v-model="search_main"
                     label="Search Command"
                     append-icon="mdi-search-web"
+                    @click:append="exec_search"
+                    @keypress.enter="exec_search"
                 />
             </v-card-text>
             <v-card-title>
@@ -65,7 +67,7 @@ import sbAuctions from "./sbAuctions.vue"
 
 export default {
     components: {
-        sbAuctions
+        sbAuctions,
     },
     data: function () {
         return {
@@ -82,10 +84,12 @@ export default {
     watch: {
         search_main_dummy: function () {
             this.$data.search_main = this.search_main_dummy;
-        }
+        },
     },
     methods: {
-
+        exec_search: function () {
+            location.href = "/search?query=" + this.search_main;
+        },
     },
     created: function () {
         this.search_main = this.$route.query.query;

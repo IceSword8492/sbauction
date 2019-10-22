@@ -22,6 +22,8 @@
                     class="hidden-sm-and-down"
                     single-line
                     append-icon="mdi-search-web"
+                    @click:append="exec_search"
+                    @keypress.enter="exec_search"
                 />
                 <v-btn class="nav-item hidden-sm-and-down" text v-if="!user || (user && user.length && user.length === 0)" to="/login">
                     <span class="nav-link" to="/login">Login</span>
@@ -115,7 +117,13 @@ export default {
         };
     },
     methods: {
-        
+        exec_search: function () {
+            if (this.$route.path.indexOf("/search") !== 0) {
+                this.$router.push("/search?query=" + this.search);
+            } else {
+                location.href = "/search?query=" + this.search;
+            }
+        },
     },
     created: function () {
         let stalker = document.createElement("div");
@@ -195,24 +203,24 @@ export default {
 }
 
 @media (min-width: 600px) {
-    #stalker > #pointer {
-        pointer-events: none;
-        position: fixed;
-        top: -8px;
-        left: -8px;
-        width: 16px;
-        height: 16px;
-        background: rgba(0,0,0,0.5);
-        border-radius: 50%;
-        transform: translate(0,0);
-        transition: transform 0.2s;
-        transition-timing-function: ease-out;
-        z-index: 999;
-    }
+    // #stalker > #pointer {
+    //     pointer-events: none;
+    //     position: fixed;
+    //     top: -8px;
+    //     left: -8px;
+    //     width: 16px;
+    //     height: 16px;
+    //     background: rgba(0,0,0,0.5);
+    //     border-radius: 50%;
+    //     transform: translate(0,0);
+    //     transition: transform 0.2s;
+    //     transition-timing-function: ease-out;
+    //     z-index: 999;
+    // }
 
-    * {
-        cursor: none !important;
-    }
+    // * {
+    //     cursor: none !important;
+    // }
 }
 
 #stalker > #item_lore {
