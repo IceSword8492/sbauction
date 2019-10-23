@@ -114,7 +114,14 @@ export default {
 		},
 	},
 	created: async function () {
-		this.$data.cards = (await this.$axios.get("/api/v1/search?query=" + (this.query || "sort:price.desc"))).data;
+		let query = this.query ? this.query.trim() : null;
+		query = query ? (
+			/^>|^sort:|^(?:(?!::).)*::|^seller:|^name:|^lore:|^tier:|^price:|^page:/.test(query)
+		) ? query : `name:/${query}/i` : query;
+		if (query) {
+			this.$router.replace("/search?query=" + query);
+		}
+		this.$data.cards = (await this.$axios.get("/api/v1/search?query=" + (query || "sort:price.desc"))).data;
 		setInterval(() =>  {
 			this.$forceUpdate();
 		}, 500);
