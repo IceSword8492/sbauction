@@ -17,11 +17,10 @@
             </v-card-text>
             <v-card-actions>
                 <v-spacer />
-                <v-btn
-                    icon
+                <v-btn class="grey--text" text
                     @click="showSearchOptions = !showSearchOptions"
                 >
-                    <v-icon>{{ showSearchOptions ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+                    Detail<v-icon>{{ showSearchOptions ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
                 </v-btn>
             </v-card-actions>
             <v-expand-transition>
@@ -58,13 +57,13 @@
                                     <v-container fluid>
                                         <v-row no-gutters>
                                             <v-col :cols="12" :xs="12" :sm="12" md="5" lg="5">
-                                                <span class="hidden-md-and-up">From</span><v-text-field v-model.number="price[0]"/>
+                                                <span class="hidden-md-and-up">From</span><v-text-field v-model.number="price[0]" prefix="₡" />
                                             </v-col>
                                             <v-col :cols="2" class="hidden-sm-and-down">
                                                 <span style="margin-top: 20px; display: inline-block;">-</span>
                                             </v-col>
                                             <v-col :cols="12" :xs="12" :sm="12" md="5" lg="5">
-                                                <span class="hidden-md-and-up">To</span><v-text-field v-model.number="price[1]"/>
+                                                <span class="hidden-md-and-up">To</span><v-text-field v-model.number="price[1]" prefix="₡" />
                                             </v-col>
                                         </v-row>
                                     </v-container>
@@ -88,6 +87,37 @@
                                             <v-radio label="Bid.asc" value="bid.asc" />
                                         </v-radio-group>
                                     </v-layout>
+                                </v-card-text>
+                            </v-col>
+                            <v-col :cols="6">
+                                <v-card-title>
+                                    Reforge
+                                </v-card-title>
+                                <v-card-text>
+                                    <v-autocomplete
+                                        v-model="selectedReforges"
+                                        :items="reforges"
+                                        label="Reforge"
+                                        multiple
+                                        chips
+                                        hide-selected
+                                        return-object
+                                    />
+                                </v-card-text>
+                            </v-col>
+                            <v-col :cols="6">
+                                <v-card-title>
+                                    Potato
+                                </v-card-title>
+                                <v-card-text>
+                                    <v-autocomplete
+                                        v-model="selectedPotatoes"
+                                        :items="potatoes"
+                                        label="Potato"
+                                        multiple
+                                        chips
+                                        hide-selected
+                                    />
                                 </v-card-text>
                             </v-col>
                         </v-row>
@@ -114,11 +144,74 @@ export default {
             tier: null,
             sort: null,
             showSearchOptions: false,
+            potatoes: [
+                "+2",
+                "+4",
+                "+6",
+                "+8",
+                "+10",
+                "+12",
+                "+14",
+                "+16",
+                "+18",
+                "+20"
+            ],
+            selectedPotatoes: [],
+            selectedReforges: [],
+            reforges: [
+                "Demonic",
+                "Forceful",
+                "Gentle",
+                "Godly",
+                "Hurtful",
+                "Keen",
+                "Strong",
+                "Superior",
+                "Unpleasant",
+                "Zealous",
+                "Odd",
+                "Rich",
+                "Epic",
+                "Fair",
+                "Fast",
+                "Heroic",
+                "Legendary",
+                "Spicy",
+                "Deadly",
+                "Fine",
+                "Grand",
+                "Hasty",
+                "Neat",
+                "Rapid",
+                "Unreal",
+                "Clean",
+                "Fierce",
+                "Heavy",
+                "Light",
+                "Mythic",
+                "Pure",
+                "Smart",
+                "Titanic",
+                "Wise",
+                "Bizzare",
+                "Itchy",
+                "Omnious",
+                "Pleasant",
+                "Pretty",
+                "Shiny",
+                "Simple",
+                "Strange",
+                "Vivid"
+            ],
         };
     },
     computed: {
         search_main_dummy: function () {
-            return `${this.$data.tier && this.$data.tier !== "all" ? "tier:" + this.$data.tier + " >" : ""} ${this.$data.priceChanged ? "price:" + this.$data.price[0] + "-" + this.$data.price[1] + " >" : ""} ${this.$data.sort ? "sort:" + this.$data.sort + " >" : ""}`.trim();
+            let query = `${this.$data.tier && this.$data.tier !== "all" ? "tier:" + this.$data.tier + " >" : ""} ${this.$data.priceChanged ? "price:" + this.$data.price[0] + "-" + this.$data.price[1] + " >" : ""} ${this.$data.sort ? "sort:" + this.$data.sort + " >" : ""} ${this.$data.selectedReforges.length ? "name:/" + this.$data.selectedReforges.map(reforge => "^" + reforge + " (?!Dragon).*|^Very " + reforge).join("|") + "/gi >" : ""} ${this.$data.selectedPotatoes.length ? "lore:/" + this.$data.selectedPotatoes.map(potato => "\\(" + potato.replace(/[+]/g, ".") + "\\)").join("|") + "/i >" : ""}`.trim();
+            if (query.lastIndexOf(">") === query.length -1) {
+                query = query.substring(0, query.lastIndexOf(">"));
+            }
+            return query.trim();
         },
     },
     watch: {
@@ -131,7 +224,7 @@ export default {
     },
     methods: {
         exec_search: function () {
-            location.href = "/search?query=" + this.search_main;
+            location.href = ("/search?" + new URLSearchParams({query: this.search_main}));
         },
     },
     created: function () {

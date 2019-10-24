@@ -5,7 +5,7 @@ const sqlite = require("sqlite-async");
 const url = require("url");
 
 const server = http.createServer(async (request, response) => {
-    let urlInfo = url.parse(request.url, true);
+    let urlInfo = url.parse(request.url);
     let path = urlInfo.pathname;
     if (path.indexOf("/api/v1/auth") === 0) {
         let res = await rp.get("https://api.mojang.com/users/profiles/minecraft/" + request.url.split("/").filter(item => item.length)[request.url.split("/").filter(item => item.length).length - 1]);
@@ -27,7 +27,7 @@ const server = http.createServer(async (request, response) => {
         return;
     }
     if (path.indexOf("/api/v1/search") === 0) {
-        let query = urlInfo.query.query;
+        let query = urlInfo.query;
         let page = Math.abs(parseInt("0" + urlInfo.query.page));
         if (!query || query.length === 0) {
             query = "sort:price.desc";
@@ -153,6 +153,7 @@ const server = http.createServer(async (request, response) => {
                 continue;
             }
         }
+        console.log(query);
         result = result.filter((auction, index) => {
             if (index >= page * 48 && index < (page + 1) * 48) {
                 return true;

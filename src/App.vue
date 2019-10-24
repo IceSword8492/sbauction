@@ -86,6 +86,9 @@
                     <v-list-item v-if="user && user.length && user.length !== 0" to="home">
                         <v-list-item-title>Home</v-list-item-title>
                     </v-list-item>
+                    <v-list-item to="search">
+                        <v-list-item-title>Search</v-list-item-title>
+                    </v-list-item>
                     <v-list-item v-if="user && user.length && user.length !== 0" to="logout">
                         <v-list-item-title>Logout</v-list-item-title>
                     </v-list-item>
