@@ -1,48 +1,48 @@
 <template>
     <v-container fluid>
-    	<v-row dense>
-    		<v-col
-    			v-for="(auction, index) in cards"
-    			:key="index"
-    			xs="12"
-    			sm="4"
-    			md="3"
-    			lg="2"
-    			class="v-application"
-				ref="cards"
-    		>
-				<v-card
-					style="width: 100%;"
-					@mouseenter="mouse_enter"
-					@mouseleave="mouse_leave"
+			<v-row dense>
+				<v-col
+					v-for="(auction, index) in cards"
+					:key="index"
+					:cols="12"
+					:xs="12"
+					:sm="6"
+					:md="4"
+					:lg="2"
+					ref="cards"
 				>
-					<v-img
-						:src="auction.img"
-						class="white--text align-end purple"
-						gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-						height="150px"
+					<v-card
+						style="width: 100%;"
+						@mouseenter="mouse_enter"
+						@mouseleave="mouse_leave"
 					>
-						<v-card-title
-							style="word-break: break-word"
-							v-text="auction.item_name"
-						/>
-					</v-img>
-					<div class="my-4 subtitle-1">
-						{{ auction.end - new Date().getTime() > 0 ? (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) > 24 ? Math.floor((auction.end - new Date().getTime()) / 1000 / 3600 / 24) + " day" + (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600 / 24) > 1 ? "s" : "") : (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 3600)).padStart(2, "0") + "h" : "") + (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) || Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60)).padStart(2, "0") + "m" : "") + ("" + Math.floor((auction.end - new Date().getTime()) / 1000 % 60)).padStart(2, "0") + "s")  : "Ended!" }}
-					</div>
-					<v-divider class="mx-4" />
-					<v-card-actions>
-						<span v-if="$vuetify.theme.dark" style="color: #ffaa00">₡{{ ("" + (auction.highest_bid_amount || auction.starting_bid)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') }}</span>
-						<span v-else>₡{{ ("" + (auction.highest_bid_amount || auction.starting_bid)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') }}</span>
-						<v-spacer />
-						<v-btn icon>
-							<v-icon>mdi-heart</v-icon>
-						</v-btn>
-					</v-card-actions>
-					<div class="item_lore" style="position: fixed; visibility: hidden;" v-html="lore_converter(auction.item_name, auction.tier, auction.item_lore)"></div>
-				</v-card>
-    		</v-col>
-    	</v-row>
+						<v-img
+							:src="auction.img"
+							class="white--text align-end purple"
+							gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
+							height="150px"
+						>
+							<v-card-title
+								style="word-break: break-word"
+								v-text="auction.item_name"
+							/>
+						</v-img>
+						<div class="my-4 subtitle-1">
+							{{ auction.end - new Date().getTime() > 0 ? (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) > 24 ? Math.floor((auction.end - new Date().getTime()) / 1000 / 3600 / 24) + " day" + (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600 / 24) > 1 ? "s" : "") : (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 3600)).padStart(2, "0") + "h" : "") + (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) || Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60)).padStart(2, "0") + "m" : "") + ("" + Math.floor((auction.end - new Date().getTime()) / 1000 % 60)).padStart(2, "0") + "s")  : "Ended!" }}
+						</div>
+						<v-divider class="mx-4" />
+						<v-card-actions>
+							<span v-if="$vuetify.theme.dark" style="color: #ffaa00">₡{{ ("" + (auction.highest_bid_amount || auction.starting_bid)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') }}</span>
+							<span v-else>₡{{ ("" + (auction.highest_bid_amount || auction.starting_bid)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') }}</span>
+							<v-spacer />
+							<v-btn icon>
+								<v-icon>mdi-heart</v-icon>
+							</v-btn>
+						</v-card-actions>
+						<div class="item_lore" style="position: fixed; visibility: hidden;" v-html="lore_converter(auction.item_name, auction.tier, auction.item_lore)"></div>
+					</v-card>
+				</v-col>
+			</v-row>
     </v-container>
 </template>
 

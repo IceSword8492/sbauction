@@ -16,6 +16,7 @@
                     <v-icon>mdi-menu</v-icon>
                 </v-btn>
                 <v-text-field
+                    ref="search"
                     v-model="search"
                     label="Search"
                     style="margin-top: 22px; margin-right: 10px;"
@@ -38,6 +39,10 @@
                         <v-list-item to="home">
                             <v-list-item-title
                             >Home</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item to="search">
+                            <v-list-item-title
+                            >Search</v-list-item-title>
                         </v-list-item>
                         <v-list-item to="logout">
                             <!-- gが切れるためheight指定 -->
@@ -126,6 +131,9 @@ export default {
                 location.href = "/search?query=" + this.search;
             }
         },
+        keyPress: function (e) {
+            console.log(e);
+        },
     },
     created: function () {
         let stalker = document.createElement("div");
@@ -136,6 +144,15 @@ export default {
         document.body.insertBefore(stalker, document.body.firstChild);
         document.addEventListener("mousemove", function (e) {
             stalker.style.transform = `translate(${e.clientX}px,${e.clientY}px)`;
+        });
+    },
+    mounted: function () {
+        document.addEventListener("keyup", (e) => {
+            if (e.keyCode === 191) {
+                this.$refs.search.$el.readOnly = true;
+                this.$refs.search.focus();
+                this.$refs.search.$el.readOnly = false;
+            }
         });
     },
     watch: {

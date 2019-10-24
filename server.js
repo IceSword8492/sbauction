@@ -32,7 +32,7 @@ const server = http.createServer(async (request, response) => {
         if (!query || query.length === 0) {
             query = "sort:price.desc";
         }
-        let regex = /(?<sort>sort:(?<sortby>[^ ]+))|(?<script>(?<mcid>(?:(?!::).)*)::(?<script_name>[^ ]+))|(?<seller>seller:(?<seller_stmt>[^ ]+))|(?<name>name:((?<name_regex>\/([^\\/]|\\.)*\/[a-z]?)|(?<name_stmt>"([^\\"]|\\.)*"|[^ ]+)))|(?<lore>lore:((?<lore_regex>\/([^\\/]|\\.)*\/[a-z]?)|[^ ]+))|(?<tier>tier:(?<tier_stmt>[^ ]+))|(?<price>price:(?<price_stmt>[^ ]+))|(?<page>page:(?<page_num>[0-9]+))|(?<continue>\>)/g;
+        let regex = /(?<sort>sort:(?<sortby>[^ ]+))|(?<script>(?<mcid>(?:(?!::).)*)::(?<script_name>[^ ]+))|(?<seller>seller:(?<seller_stmt>[^ ]+))|(?<name>name:((?<name_regex>\/([^\\/]|\\.)*\/(?<name_regexext>[a-z]*))|(?<name_stmt>"([^\\"]|\\.)*"|[^ ]+)))|(?<lore>lore:((?<lore_regex>\/([^\\/]|\\.)*\/(?<lore_regexext>[a-z]*))|[^ ]+))|(?<tier>tier:(?<tier_stmt>[^ ]+))|(?<price>price:(?<price_stmt>[^ ]+))|(?<page>page:(?<page_num>[0-9]+))|(?<continue>\>)/g;
         let matched = null;
         let result = [];
         let insertFlag = false;
@@ -54,7 +54,7 @@ const server = http.createServer(async (request, response) => {
                 if (result.length) {
                     if (matched.groups.lore_regex) {
                         if (matched.groups.lore_regex.match(/\/(?<value>([^\\/]|\\.)*)\/[a-z]?/)) {
-                            result = result.filter(auction => auction.item_lore.match(new RegExp(matched.groups.lore_regex.match(/\/(?<value>([^\\/]|\\.)*)\/[a-z]?/).groups.value)));
+                            result = result.filter(auction => auction.item_lore.match(new RegExp(matched.groups.lore_regex.match(/\/(?<value>([^\\/]|\\.)*)\/[a-z]*/).groups.value, matched.groups.lore_regexext)));
                         } else {
                             console.error("lore regex error continue");
                         } 
@@ -62,7 +62,7 @@ const server = http.createServer(async (request, response) => {
                 } else {
                     if (matched.groups.lore_regex) {
                         if (matched.groups.lore_regex.match(/\/(?<value>([^\\/]|\\.)*)\/[a-z]?/)) {
-                            result = all_auctions.filter(auction => auction.item_lore.match(new RegExp(matched.groups.lore_regex.match(/\/(?<value>([^\\/]|\\.)*)\/[a-z]?/).groups.value)));
+                            result = all_auctions.filter(auction => auction.item_lore.match(new RegExp(matched.groups.lore_regex.match(/\/(?<value>([^\\/]|\\.)*)\/[a-z]*/).groups.value, matched.groups.lore_regexext)));
                         } else {
                             console.error("lore regex error");
                         }
@@ -105,7 +105,7 @@ const server = http.createServer(async (request, response) => {
                 if (result.length) {
                     if (matched.groups.name_regex) {
                         if (matched.groups.name_regex.match(/\/(?<value>([^\\/]|\\.)*)\/[a-z]?/)) {
-                            result = result.filter(auction => auction.item_name.match(new RegExp(matched.groups.name_regex.match(/\/(?<value>([^\\/]|\\.)*)\/[a-z]?/).groups.value)));
+                            result = result.filter(auction => auction.item_name.match(new RegExp(matched.groups.name_regex.match(/\/(?<value>([^\\/]|\\.)*)\/[a-z]*/).groups.value, matched.groups.name_regexext)));
                         } else {
                             console.error("lore regex error continue");
                         } 
@@ -115,7 +115,7 @@ const server = http.createServer(async (request, response) => {
                 } else {
                     if (matched.groups.name_regex) {
                         if (matched.groups.name_regex.match(/\/(?<value>([^\\/]|\\.)*)\/[a-z]?/)) {
-                            result = all_auctions.filter(auction => auction.item_name.match(new RegExp(matched.groups.name_regex.match(/\/(?<value>([^\\/]|\\.)*)\/[a-z]?/).groups.value)));
+                            result = all_auctions.filter(auction => auction.item_name.match(new RegExp(matched.groups.name_regex.match(/\/(?<value>([^\\/]|\\.)*)\/[a-z]*/).groups.value, matched.groups.name_regexext)));
                         } else {
                             console.error("lore regex error");
                         }
@@ -223,7 +223,7 @@ async function update () {
     }
 }
 
-function merge (a, b, p) {
+function merge (a = [], b = [], p) {
     return Object.values([...a, ...b]
         .reduce((obj, it) => {
             obj[it[p]] = it;
