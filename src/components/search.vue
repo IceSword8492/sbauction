@@ -8,11 +8,14 @@
             </v-card-title>
             <v-card-text>
                 <v-text-field
+                    ref="sb"
                     v-model="search_main"
                     label="Search Query"
                     append-icon="mdi-search-web"
                     @click:append="exec_search"
                     @keypress.enter="exec_search"
+                    @focus="onFocusSB"
+                    @blur="onBlurSB"
                 />
             </v-card-text>
             <v-card-actions>
@@ -30,10 +33,33 @@
                         <v-row>
                             <v-col :cols="6">
                                 <v-card-title>
+                                    Name
+                                </v-card-title>
+                                <v-card-text>
+                                    <v-container fluid>
+                                        <v-row>
+                                            <v-col :cols="10">
+                                                <v-text-field
+                                                    v-model="name"
+                                                    label="Name"
+                                                />
+                                            </v-col>
+                                            <v-col :cols="2">
+                                                <v-text-field
+                                                    v-model="name_flag"
+                                                    label="Flag"
+                                                />
+                                            </v-col>
+                                        </v-row>
+                                    </v-container>
+                                </v-card-text>
+                            </v-col>
+                            <v-col :cols="6">
+                                <v-card-title>
                                     Tier
                                 </v-card-title>
                                 <v-card-text>
-                                    <v-layout justify-center>
+                                    <v-container fluid>
                                         <v-radio-group
                                             :row="true"
                                             v-model="tier"
@@ -46,7 +72,7 @@
                                             <v-radio label="Legendary" value="legendary" />
                                             <v-radio label="Special" value="special" />
                                         </v-radio-group>
-                                    </v-layout>
+                                    </v-container>
                                 </v-card-text>
                             </v-col>
                             <v-col :cols="6">
@@ -74,7 +100,7 @@
                                     Sort
                                 </v-card-title>
                                 <v-card-text>
-                                    <v-layout justify-center>
+                                    <v-container fluid>
                                         <v-radio-group
                                             :row="true"
                                             v-model="sort"
@@ -86,7 +112,7 @@
                                             <v-radio label="Bid.desc" value="bid.desc" />
                                             <v-radio label="Bid.asc" value="bid.asc" />
                                         </v-radio-group>
-                                    </v-layout>
+                                    </v-container>
                                 </v-card-text>
                             </v-col>
                             <v-col :cols="6">
@@ -120,6 +146,23 @@
                                     />
                                 </v-card-text>
                             </v-col>
+                            <v-col :cols="6">
+                                <v-card-title>
+                                    State
+                                </v-card-title>
+                                <v-card-text>
+                                    <v-container fluid>
+                                        <v-radio-group
+                                            :row="true"
+                                            v-model="state"
+                                        >
+                                            <v-radio label="Open" value="open" />
+                                            <v-radio label="Ending" value="ending" />
+                                            <v-radio label="Ended" value="ended" />
+                                        </v-radio-group>
+                                    </v-container>
+                                </v-card-text>
+                            </v-col>
                         </v-row>
                     </v-container>
                 </div>
@@ -142,7 +185,10 @@ export default {
             price: [0, 100000],
             priceChanged: false,
             tier: null,
+            state: null,
             sort: null,
+            name: "",
+            name_flag: "",
             showSearchOptions: false,
             potatoes: [
                 "+2",
@@ -203,11 +249,17 @@ export default {
                 "Strange",
                 "Vivid"
             ],
+            onFocusSB: () => {
+                document.removeEventListener("keyup", this.$e.focus_search_bar);
+            },
+            onBlurSB: () => {
+                document.addEventListener("keyup", this.$e.focus_search_bar);
+            },
         };
     },
     computed: {
         search_main_dummy: function () {
-            let query = `${this.$data.tier && this.$data.tier !== "all" ? "tier:" + this.$data.tier + " >" : ""} ${this.$data.priceChanged ? "price:" + this.$data.price[0] + "-" + this.$data.price[1] + " >" : ""} ${this.$data.sort ? "sort:" + this.$data.sort + " >" : ""} ${this.$data.selectedReforges.length ? "name:/" + this.$data.selectedReforges.map(reforge => "^" + reforge + " (?!Dragon).*|^Very " + reforge).join("|") + "/gi >" : ""} ${this.$data.selectedPotatoes.length ? "lore:/" + this.$data.selectedPotatoes.map(potato => "\\(" + potato.replace(/[+]/g, ".") + "\\)").join("|") + "/i >" : ""}`.trim();
+            let query = `${this.$data.name.length ? `name:/${this.$data.name}/${this.$data.name_flag} >` : ""} ${this.$data.tier && this.$data.tier !== "all" ? "tier:" + this.$data.tier + " >" : ""} ${this.$data.priceChanged ? "price:" + this.$data.price[0] + "-" + this.$data.price[1] + " >" : ""} ${this.$data.sort ? "sort:" + this.$data.sort + " >" : ""} ${this.$data.selectedReforges.length ? "name:/" + this.$data.selectedReforges.map(reforge => "^" + reforge + " (?!Dragon).*|^Very " + reforge).join("|") + "/gi >" : ""} ${this.$data.selectedPotatoes.length ? "lore:/" + this.$data.selectedPotatoes.map(potato => "\\(" + potato.replace(/[+]/g, ".") + "\\)").join("|") + "/i >" : ""} ${this.$data.state ? "state:" + this.$data.state + " >" : ""}`.trim();
             if (query.lastIndexOf(">") === query.length -1) {
                 query = query.substring(0, query.lastIndexOf(">"));
             }

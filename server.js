@@ -32,14 +32,15 @@ const server = http.createServer(async (request, response) => {
         if (!query || query.length === 0) {
             query = "sort:price.desc";
         }
-        let regex = /(?<sort>sort:(?<sortby>[^ ]+))|(?<script>(?<mcid>(?:(?!::).)*)::(?<script_name>[^ ]+))|(?<seller>seller:(?<seller_stmt>[^ ]+))|(?<name>name:((?<name_regex>\/([^\\/]|\\.)*\/(?<name_regexext>[a-z]*))|(?<name_stmt>"([^\\"]|\\.)*"|[^ ]+)))|(?<lore>lore:((?<lore_regex>\/([^\\/]|\\.)*\/(?<lore_regexext>[a-z]*))|[^ ]+))|(?<tier>tier:(?<tier_stmt>[^ ]+))|(?<price>price:(?<price_stmt>[^ ]+))|(?<page>page:(?<page_num>[0-9]+))|(?<continue>\>)/g;
+        let regex = /(?<state>state:(?<state_stmt>[^ ]+))|(?<sort>sort:(?<sortby>[^ ]+))|(?<script>(?<mcid>(?:(?!::).)*)::(?<script_name>[^ ]+))|(?<seller>seller:(?<seller_stmt>[^ ]+))|(?<name>name:((?<name_regex>\/([^\\/]|\\.)*\/(?<name_regexext>[a-z]*))|(?<name_stmt>"([^\\"]|\\.)*"|[^ ]+)))|(?<lore>lore:((?<lore_regex>\/([^\\/]|\\.)*\/(?<lore_regexext>[a-z]*))|[^ ]+))|(?<tier>tier:(?<tier_stmt>[^ ]+))|(?<price>price:(?<price_stmt>[^ ]+))|(?<page>page:(?<page_num>[0-9]+))|(?<continue>\>)/g;
         let matched = null;
         let result = [];
         let insertFlag = false;
         let matchFlag = false;
         while (matched = regex.exec(query)) {
             if (result.length) {
-                if (matched.groups.continue && insertFlag) { console.log("err");
+                if (matched.groups.continue && insertFlag) {
+                    console.error("query error");
                     response.writeHead(200, {"Content-Type": "application/json"});
                     response.write("[]");
                     response.end();
@@ -48,6 +49,24 @@ const server = http.createServer(async (request, response) => {
                 if (matched.groups.continue && !insertFlag) {
                     insertFlag = true;
                 }
+            }
+            if (matched.groups.state) {
+                matchFlag = true;
+                result = (result.length ? result : all_auctions).filter(auction => {
+                    let now = new Date().getTime();
+                    switch (matched.groups.state_stmt) {
+                    case "ended":
+                        return auction.end - now < 0;
+                    case "ending":
+                        return 0 < auction.end - now && auction.end - now < 300000; // 5mins
+                    case "open":
+                        return now - auction.end < 0;
+                    default:
+                        return false;
+                    }
+                });
+                insertFlag = false;
+                continue;
             }
             if (matched.groups.lore) {
                 matchFlag = true;
@@ -85,7 +104,7 @@ const server = http.createServer(async (request, response) => {
                 continue;
             }
             if (matched.groups.page) {
-                page = Math.floor(parseInt("0" + matched.groups.page_num));
+                page = parseInt("0" + matched.groups.page_num);
                 insertFlag = false;
                 continue;
             }
@@ -153,7 +172,6 @@ const server = http.createServer(async (request, response) => {
                 continue;
             }
         }
-        console.log(query);
         result = result.filter((auction, index) => {
             if (index >= page * 48 && index < (page + 1) * 48) {
                 return true;

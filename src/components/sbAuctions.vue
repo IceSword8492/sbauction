@@ -28,7 +28,7 @@
 							/>
 						</v-img>
 						<div class="my-4 subtitle-1">
-							{{ auction.end - new Date().getTime() > 0 ? (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) > 24 ? Math.floor((auction.end - new Date().getTime()) / 1000 / 3600 / 24) + " day" + (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600 / 24) > 1 ? "s" : "") : (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 3600)).padStart(2, "0") + "h" : "") + (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) || Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60)).padStart(2, "0") + "m" : "") + ("" + Math.floor((auction.end - new Date().getTime()) / 1000 % 60)).padStart(2, "0") + "s")  : "Ended!" }}
+							{{ (auction.end - new Date().getTime()) > 3000 ? (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) > 24 ? Math.floor((auction.end - new Date().getTime()) / 1000 / 3600 / 24) + " day" + (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600 / 24) > 1 ? "s" : "") : (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 3600)).padStart(2, "0") + "h" : "") + (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) || Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60)).padStart(2, "0") + "m" : "") + ("" + Math.floor((auction.end - new Date().getTime()) / 1000 % 60)).padStart(2, "0") + "s") : (auction.end - new Date().getTime()) > 0 ? "Soon" : "Ended!" }}
 						</div>
 						<v-divider class="mx-4" />
 						<v-card-actions>
@@ -116,7 +116,7 @@ export default {
 	created: async function () {
 		let query = this.query ? this.query.trim() : null;
 		query = query ? (
-			/^>|^sort:|^(?:(?!::).)*::|^seller:|^name:|^lore:|^tier:|^price:|^page:/.test(query)
+			/^>|^sort:|^(?:(?!::).)*::|^seller:|^name:|^lore:|^tier:|^price:|^page:|^state/.test(query)
 		) ? query : `name:/${query}/i` : query;
 		if (query) {
 			this.$router.replace("/search?query=" + query);

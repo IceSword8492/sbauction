@@ -16,6 +16,7 @@ let Auth = {
 Vue.config.productionTip = false;
 Vue.prototype.$axios = axios;
 Vue.prototype.$push = push;
+Vue.prototype.$e = {}; // for event listeners
 
 Vue.use(Router);
 Vue.use(Vuetify);
@@ -41,7 +42,7 @@ new Vue({
 	store,
 	vuetify: new Vuetify({
 		theme: {
-			dark: true,
+			dark: false,
 		},
 	}),
 	render: function (h) { return h(App) },

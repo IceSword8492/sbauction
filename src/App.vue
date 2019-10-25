@@ -150,13 +150,12 @@ export default {
         });
     },
     mounted: function () {
-        document.addEventListener("keyup", (e) => {
+        this.$e.focus_search_bar = (e) => {
             if (e.keyCode === 191) {
-                this.$refs.search.$el.readOnly = true;
                 this.$refs.search.focus();
-                this.$refs.search.$el.readOnly = false;
             }
-        });
+        };
+        document.addEventListener("keyup", this.$e.focus_search_bar);
     },
     watch: {
         group: function () {
