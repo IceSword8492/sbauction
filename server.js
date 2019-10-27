@@ -21,6 +21,7 @@ const server = http.createServer(async (request, response) => {
                     return;
                 }
                 console.log(stdout || stderr);
+                console.log("done");
             });
         });
     }
