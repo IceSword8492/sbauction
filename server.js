@@ -9,12 +9,19 @@ const server = http.createServer(async (request, response) => {
     let urlInfo = url.parse(request.url, true);
     let path = urlInfo.pathname;
     if (/^\/deploy/.test(path)) {
-        let child = child_process.execFile("git", ["pull", "origin", "master"], (err, stdout, stderr) => {
+        let child_git = child_process.execFile("git", ["pull", "origin", "master"], (err, stdout, stderr) => {
             if (err) {
                 console.error(err);
                 return;
             }
-            console.log(stdout);
+            console.log(stdout || stderr);
+            let child_refresh = child_process.execFile("refresh", [], (err, stdout, stderr) => {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+                console.log(stdout || stderr);
+            });
         });
     }
     if (path.indexOf("/api/v1/auth") === 0) {
