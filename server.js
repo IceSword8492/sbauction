@@ -15,7 +15,6 @@ const server = http.createServer(async (request, response) => {
                 return;
             }
             console.log(stdout);
-            console.log("child_pid: " + child.pid);
         });
     }
     if (path.indexOf("/api/v1/auth") === 0) {
