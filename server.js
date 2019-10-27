@@ -3,10 +3,21 @@ const http = require("http");
 const rp = require("request-promise");
 const sqlite = require("sqlite-async");
 const url = require("url");
+const child_process = require("child_process");
 
 const server = http.createServer(async (request, response) => {
     let urlInfo = url.parse(request.url, true);
     let path = urlInfo.pathname;
+    if (/^\/deploy/.test()) {
+        let child = child_process.execFile("git", ["pull", "origin", "master"], (err, stdout, stderr) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            console.log(stdout);
+            console.log("child_pid: " + child.pid);
+        });
+    }
     if (path.indexOf("/api/v1/auth") === 0) {
         let res = await rp.get("https://api.mojang.com/users/profiles/minecraft/" + request.url.split("/").filter(item => item.length)[request.url.split("/").filter(item => item.length).length - 1]);
         response.writeHead(200, {"Content-Type": "application/json"});
