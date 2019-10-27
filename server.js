@@ -8,7 +8,7 @@ const child_process = require("child_process");
 const server = http.createServer(async (request, response) => {
     let urlInfo = url.parse(request.url, true);
     let path = urlInfo.pathname;
-    if (/^\/deploy/.test()) {
+    if (/^\/deploy/.test(path)) {
         let child = child_process.execFile("git", ["pull", "origin", "master"], (err, stdout, stderr) => {
             if (err) {
                 console.error(err);
