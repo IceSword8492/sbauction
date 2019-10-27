@@ -27,7 +27,7 @@
                 </v-btn>
             </v-card-actions>
             <v-expand-transition>
-                <div v-show="showSearchOptions">
+                <div v-show="showSearchOptions" @keyup.enter="exec_search_ctrl">
                     <v-divider></v-divider>
                     <v-container>
                         <v-row>
@@ -37,14 +37,24 @@
                                 </v-card-title>
                                 <v-card-text>
                                     <v-container fluid>
-                                        <v-row>
-                                            <v-col :cols="10">
+                                        <v-row dense>
+                                            <v-col
+                                                :xs="12"
+                                                :sm="8"
+                                                :md="10"
+                                                :lg="10"
+                                            >
                                                 <v-text-field
                                                     v-model="name"
                                                     label="Name"
                                                 />
                                             </v-col>
-                                            <v-col :cols="2">
+                                            <v-col
+                                                :xs="12"
+                                                :sm="4"
+                                                :md="2"
+                                                :lg="2"
+                                            >
                                                 <v-text-field
                                                     v-model="name_flag"
                                                     label="Flag"
@@ -251,9 +261,11 @@ export default {
             ],
             onFocusSB: () => {
                 document.removeEventListener("keyup", this.$e.focus_search_bar);
+                document.removeEventListener("keyup", this.$e.extend_search_options);
             },
             onBlurSB: () => {
                 document.addEventListener("keyup", this.$e.focus_search_bar);
+                document.addEventListener("keyup", this.$e.extend_search_options);
             },
         };
     },
@@ -278,9 +290,20 @@ export default {
         exec_search: function () {
             location.href = ("/search?" + new URLSearchParams({query: this.search_main}));
         },
+        exec_search_ctrl: function (e) {
+            if (e.ctrlKey) {
+                this.exec_search();
+            }
+        },
     },
     created: function () {
         this.search_main = this.$route.query.query;
+        this.$e.extend_search_options = (e) => {
+            if (e.keyCode === 186) {
+                this.showSearchOptions ^= 1;
+            }
+        };
+        document.addEventListener("keyup", this.$e.extend_search_options);
     },
 }
 </script>

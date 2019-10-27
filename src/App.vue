@@ -143,10 +143,16 @@ export default {
         stalker.id = "stalker";
         stalker.style.zIndex = "9999";
         stalker.style.position = "fixed";
-        stalker.innerHTML = `<div id="pointer"></div><div id="item_lore">ITEMLORE</div>`;
+        stalker.style.backgroundColor = 0xff0000;
+        stalker.innerHTML = `<div id="pointer"></div><div id="item_lore" style="position: absolute;">ITEMLORE</div>`;
         document.body.insertBefore(stalker, document.body.firstChild);
         document.addEventListener("mousemove", function (e) {
+			let oh = document.getElementById("item_lore").clientHeight;
+			let y = stalker.getBoundingClientRect().top;
+			let ow = document.getElementById("item_lore").clientWidth;
+            let x = stalker.getBoundingClientRect().left;
             stalker.style.transform = `translate(${e.clientX}px,${e.clientY}px)`;
+			document.getElementById("item_lore").style.transform = `translate(${window.innerWidth - (ow + x + 20) < 0 ? window.innerWidth - (ow + x + 20) : 0}px,${window.innerHeight - (oh + y) < 0 ? window.innerHeight - (oh + y) : 0}px)`;
         });
     },
     mounted: function () {
@@ -185,19 +191,19 @@ export default {
     }
 }
 
-@media (min-width: 600px) {
+@media (max-width: 600px) {
     #custom-container {
-        max-width: 580px;
+        max-width: 590px;
     }
 }
 
-@media (min-width: 960px) {
+@media (max-width: 960px) {
     #custom-container {
         max-width: 940px;
     }
 }
 
-@media (min-width: 1264px) {
+@media (max-width: 1264px) {
     #custom-container {
         max-width: 1150px;
     }

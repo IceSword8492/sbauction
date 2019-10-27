@@ -20,7 +20,7 @@ const server = http.createServer(async (request, response) => {
     }
     if (path.indexOf("/api/v1/auctions") === 0) {
         let page = parseInt(request.url.split("/").filter(item => item.length)[request.url.split("/").filter(item => item.length).length - 1]);
-        let res = await rp.get("https://api.hypixel.net/skyblock/auctions?key=f20bce2b-d8a4-4c97-ac90-ea5c732f8d25&page=" + page);
+        let res = await rp.get("https://api.hypixel.net/skyblock/auctions?key=10cb5c9a-8f97-4c2c-bb7d-c49cd5d8046e&page=" + page).catch(console.error);
         response.writeHead(200, {"Content-Type": "application/json"});
         response.write(res);
         response.end();
@@ -38,7 +38,7 @@ const server = http.createServer(async (request, response) => {
         let insertFlag = false;
         let matchFlag = false;
         while (matched = regex.exec(query)) {
-            if (result.length) {
+            if (matchFlag) {
                 if (matched.groups.continue && insertFlag) {
                     console.error("query error");
                     response.writeHead(200, {"Content-Type": "application/json"});
@@ -51,8 +51,7 @@ const server = http.createServer(async (request, response) => {
                 }
             }
             if (matched.groups.state) {
-                matchFlag = true;
-                result = (result.length ? result : all_auctions).filter(auction => {
+                result = (matchFlag ? result : all_auctions).filter(auction => {
                     let now = new Date().getTime();
                     switch (matched.groups.state_stmt) {
                     case "ended":
@@ -65,12 +64,12 @@ const server = http.createServer(async (request, response) => {
                         return false;
                     }
                 });
+                matchFlag = true;
                 insertFlag = false;
                 continue;
             }
             if (matched.groups.lore) {
-                matchFlag = true;
-                if (result.length) {
+                if (matchFlag) {
                     if (matched.groups.lore_regex) {
                         if (matched.groups.lore_regex.match(/\/(?<value>([^\\/]|\\.)*)\/[a-z]?/)) {
                             result = result.filter(auction => auction.item_lore.match(new RegExp(matched.groups.lore_regex.match(/\/(?<value>([^\\/]|\\.)*)\/[a-z]*/).groups.value, matched.groups.lore_regexext)));
@@ -87,41 +86,42 @@ const server = http.createServer(async (request, response) => {
                         }
                     }
                 }
+                matchFlag = true;
                 insertFlag = false;
                 continue;
             }
             if (matched.groups.tier) {
+                result = (matchFlag ? result : all_auctions).filter(auction => auction.tier.toLowerCase() === matched.groups.tier_stmt.toLowerCase());
                 matchFlag = true;
-                result = (result.length ? result : all_auctions).filter(auction => auction.tier.toLowerCase() === matched.groups.tier_stmt.toLowerCase());
                 insertFlag = false;
                 continue;
             }
             if (matched.groups.seller) {
-                matchFlag = true;
                 let seller = (await rp.get("/api/v1/auth/" + matched.groups.seller_stmt)).match(/{{(?<value>(?:(?!{{|}}).)+)}}/).groups.value;
-                result = (result.length ? result : all_auctions).filter(auction => auction.auctioneer === seller);
+                result = (matchFlag ? result : all_auctions).filter(auction => auction.auctioneer === seller);
+                matchFlag = true;
                 insertFlag = false;
                 continue;
             }
             if (matched.groups.page) {
                 page = parseInt("0" + matched.groups.page_num);
+                matchFlag = true;
                 insertFlag = false;
                 continue;
             }
             if (matched.groups.price) {
-                matchFlag = true;
                 let m = matched.groups.price_stmt.match(/(?<low>[0-9]+)-(?<high>[0-9]+)/);
                 let [price_low, price_high] = [m.groups.low, m.groups.high];
-                result = (result.length ? result : all_auctions).filter(auction => {
+                result = (matchFlag ? result : all_auctions).filter(auction => {
                     let price = auction.highest_bid_amount || auction.starting_bid;
                     return price_low <= price && price <= price_high;
                 });
+                matchFlag = true;
                 insertFlag = false;
                 continue;
             }
             if (matched.groups.name) {
-                matchFlag = true;
-                if (result.length) {
+                if (matchFlag) {
                     if (matched.groups.name_regex) {
                         if (matched.groups.name_regex.match(/\/(?<value>([^\\/]|\\.)*)\/[a-z]?/)) {
                             result = result.filter(auction => auction.item_name.match(new RegExp(matched.groups.name_regex.match(/\/(?<value>([^\\/]|\\.)*)\/[a-z]*/).groups.value, matched.groups.name_regexext)));
@@ -142,6 +142,7 @@ const server = http.createServer(async (request, response) => {
                         result = all_auctions.filter(auction => auction.item_name.toLowerCase() === matched.groups.name_stmt.match(/"?(?<value>([^\\"]|\\.)*)"?/).groups.value.toLowerCase());
                     }
                 }
+                matchFlag = true;
                 insertFlag = false;
                 continue;
             }
@@ -228,7 +229,7 @@ setInterval(function () {
 
 async function update () {
     let totalPages = 1;
-    let auctions = JSON.parse(await rp.get("https://api.hypixel.net/skyblock/auctions?key=f20bce2b-d8a4-4c97-ac90-ea5c732f8d25"));
+    let auctions = JSON.parse(await rp.get("https://api.hypixel.net/skyblock/auctions?key=10cb5c9a-8f97-4c2c-bb7d-c49cd5d8046e"));
 
     totalPages = auctions.totalPages;
 
@@ -236,7 +237,7 @@ async function update () {
 
     all_auctions.sort(sortMethod);
     for (let page = 2; page < totalPages; page++) {
-        auctions = JSON.parse(await rp.get("https://api.hypixel.net/skyblock/auctions?key=f20bce2b-d8a4-4c97-ac90-ea5c732f8d25&page=" + page));
+        auctions = JSON.parse(await rp.get("https://api.hypixel.net/skyblock/auctions?key=10cb5c9a-8f97-4c2c-bb7d-c49cd5d8046e&page=" + page));
         all_auctions = merge(all_auctions, auctions.auctions, "uuid");
         all_auctions.sort(sortMethod);
     }
