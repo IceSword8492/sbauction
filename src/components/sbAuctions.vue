@@ -44,7 +44,7 @@
 						<span v-if="$vuetify.theme.dark" style="color: #ffaa00">₡{{ ("" + (auction.highest_bid_amount || auction.starting_bid)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') }}</span>
 						<span v-else>₡{{ ("" + (auction.highest_bid_amount || auction.starting_bid)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') }}</span>
 						<v-spacer />
-						<v-btn icon>
+						<v-btn icon v-if="user">
 							<v-icon>mdi-heart</v-icon>
 						</v-btn>
 					</v-card-actions>
@@ -74,6 +74,7 @@ export default {
 			cards: [],
 			totalPages: 1,
 			page: 1,
+			user: this.$mcid
     	};
 	},
 	watch: {
