@@ -117,7 +117,7 @@ export default {
 		let query = this.query ? this.query.trim() : null;
 		query = query ? (
 			/^>|^sort:|^query:|^seller:|^name:|^lore:|^tier:|^price:|^page:|^state:|^reforge:|^potato:/.test(query.trim())
-		) ? query : `name:"${query}"` : query;
+		) ? query : `name:"${query}" sort:time.asc state:open` : query;
 		if (query) {
 			this.$router.replace("/search?query=" + query);
 		}
