@@ -36,32 +36,10 @@
                                     Name
                                 </v-card-title>
                                 <v-card-text>
-                                    <v-container fluid>
-                                        <v-row dense>
-                                            <v-col
-                                                :xs="12"
-                                                :sm="8"
-                                                :md="10"
-                                                :lg="10"
-                                            >
-                                                <v-text-field
-                                                    v-model="name"
-                                                    label="Name"
-                                                />
-                                            </v-col>
-                                            <v-col
-                                                :xs="12"
-                                                :sm="4"
-                                                :md="2"
-                                                :lg="2"
-                                            >
-                                                <v-text-field
-                                                    v-model="name_flag"
-                                                    label="Flag"
-                                                />
-                                            </v-col>
-                                        </v-row>
-                                    </v-container>
+                                    <v-text-field
+                                        v-model="name"
+                                        label="Name"
+                                    />
                                 </v-card-text>
                             </v-col>
                             <v-col :cols="6">
@@ -198,7 +176,6 @@ export default {
             state: null,
             sort: null,
             name: "",
-            name_flag: "",
             showSearchOptions: false,
             potatoes: [
                 "+2",
@@ -271,10 +248,7 @@ export default {
     },
     computed: {
         search_main_dummy: function () {
-            let query = `${this.$data.name.length ? `name:/${this.$data.name}/${this.$data.name_flag} >` : ""} ${this.$data.tier && this.$data.tier !== "all" ? "tier:" + this.$data.tier + " >" : ""} ${this.$data.priceChanged ? "price:" + this.$data.price[0] + "-" + this.$data.price[1] + " >" : ""} ${this.$data.sort ? "sort:" + this.$data.sort + " >" : ""} ${this.$data.selectedReforges.length ? "name:/" + this.$data.selectedReforges.map(reforge => "^" + reforge + " (?!Dragon).*|^Very " + reforge).join("|") + "/gi >" : ""} ${this.$data.selectedPotatoes.length ? "lore:/" + this.$data.selectedPotatoes.map(potato => "\\(" + potato.replace(/[+]/g, ".") + "\\)").join("|") + "/i >" : ""} ${this.$data.state ? "state:" + this.$data.state + " >" : ""}`.trim();
-            if (query.lastIndexOf(">") === query.length -1) {
-                query = query.substring(0, query.lastIndexOf(">"));
-            }
+            let query = `${this.$data.name.length ? `name:\"${this.$data.name}\"` : ""} ${this.$data.tier && this.$data.tier !== "all" ? "tier:" + this.$data.tier : ""} ${this.$data.priceChanged ? "price:" + this.$data.price[0] + "-" + this.$data.price[1] : ""} ${this.$data.sort ? "sort:" + this.$data.sort : ""} ${this.$data.selectedReforges.length ? "reforge:\"" + this.$data.selectedReforges.map(reforge => reforge + " [^D][^r][^a][^g][^o][^n]*,Very " + reforge + "*").join(",") + "\"" : ""} ${this.$data.selectedPotatoes.length ? "potato:" + this.$data.selectedPotatoes.map(potato => "(" + potato.replace(/\+/g, "_") + ")").join(",") : ""} ${this.$data.state ? "state:" + this.$data.state : ""}`.trim();
             return query.trim();
         },
     },

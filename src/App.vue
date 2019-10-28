@@ -152,7 +152,7 @@ export default {
 			let ow = document.getElementById("item_lore").clientWidth;
             let x = stalker.getBoundingClientRect().left;
             stalker.style.transform = `translate(${e.clientX}px,${e.clientY}px)`;
-			document.getElementById("item_lore").style.transform = `translate(${window.innerWidth - (ow + x + 20) < 0 ? window.innerWidth - (ow + x + 20) : 0}px,${window.innerHeight - (oh + y) < 0 ? window.innerHeight - (oh + y) : 0}px)`;
+			document.getElementById("item_lore").style.transform = `translate(${window.innerWidth - (ow + x + 50) < 0 ? window.innerWidth - (ow + x + 50) : 0}px,${window.innerHeight - (oh + y - 30) < 0 ? window.innerHeight - (oh + y - 30) : 0}px)`;
         });
     },
     mounted: function () {
@@ -248,6 +248,10 @@ export default {
     // * {
     //     cursor: none !important;
     // }
+}
+
+#stalker {
+    pointer-events: none;
 }
 
 #stalker > #item_lore {
