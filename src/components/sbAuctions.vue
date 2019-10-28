@@ -147,14 +147,13 @@ export default {
 			}
 			this.$data.cards = (await this.$axios.get("/api/v1/search?query=" + (query || "sort:price.desc") + (this.page !== undefined ? `&page=${this.page - 1}` : ""))).data;
 			this.$data.totalPages = (await this.$axios.get("/api/v1/search/total?query=" + (query || "sort:price.desc"))).data.totalPages;
-			console.log(this.$data.totalPages, (await this.$axios.get("/api/v1/search/total?query=" + (query || "sort:price.desc"))).data);
 		},
 	},
 	created: async function () {
 		await this.update_cards();
 		setInterval(() =>  {
 			this.$forceUpdate();
-		}, 500);
+		}, 1000);
 	},
 }
 </script>
