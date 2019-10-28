@@ -44,6 +44,17 @@
                             </v-col>
                             <v-col :cols="6">
                                 <v-card-title>
+                                    Lore
+                                </v-card-title>
+                                <v-card-text>
+                                    <v-text-field
+                                        v-model="lore"
+                                        label="Lore"
+                                    />
+                                </v-card-text>
+                            </v-col>
+                            <v-col :cols="6">
+                                <v-card-title>
                                     Tier
                                 </v-card-title>
                                 <v-card-text>
@@ -177,6 +188,7 @@ export default {
             sort: null,
             name: "",
             showSearchOptions: false,
+            lore: "",
             potatoes: [
                 "+2",
                 "+4",
@@ -250,6 +262,7 @@ export default {
         search_main_dummy: function () {
             let query = [
                 this.$data.name.length ? `name:\"${this.$data.name}\"` : "",
+                this.$data.lore.length ? `lore:\"${this.$data.lore}\"` : "",
                 this.$data.tier && this.$data.tier !== "all" ? "tier:" + this.$data.tier : "",
                 this.$data.priceChanged ? "price:" + this.$data.price[0] + "-" + this.$data.price[1] : "",
                 this.$data.sort ? "sort:" + this.$data.sort : "",

@@ -44,6 +44,14 @@ const server = http.createServer(async (request, response) => {
         response.end();
         return;
     }
+    if (path.indexOf("/api/v1/search/total") === 0) {
+        let query = urlInfo.query.query || "";
+        let res = await rp.get("https://sbauctionserver.glitch.me/api/v1/search/total?query=" + query);
+        response.writeHead(200, {"Content-Type": "application/json"});
+        response.write(res);
+        response.end();
+        return;
+    }
     if (path.indexOf("/api/v1/search") === 0) {
         let query = urlInfo.query.query || "";
         let page = Math.abs(parseInt("0" + urlInfo.query.page));

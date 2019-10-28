@@ -1,48 +1,66 @@
 <template>
     <v-container fluid>
-			<v-row dense>
-				<v-col
-					v-for="(auction, index) in cards"
-					:key="index"
-					:cols="12"
-					:xs="12"
-					:sm="6"
-					:md="4"
-					:lg="2"
-					ref="cards"
+		<v-row>
+			<v-col :cols="12">
+				<v-pagination
+					v-model="page"
+					:total-visible="7"
+					:length="totalPages"
+				/>
+			</v-col>
+		</v-row>
+		<v-row dense>
+			<v-col
+				v-for="(auction, index) in cards"
+				:key="index"
+				:cols="12"
+				:xs="12"
+				:sm="6"
+				:md="4"
+				:lg="2"
+				ref="cards"
+			>
+				<v-card
+					style="width: 100%;"
+					@mouseenter="mouse_enter"
+					@mouseleave="mouse_leave"
 				>
-					<v-card
-						style="width: 100%;"
-						@mouseenter="mouse_enter"
-						@mouseleave="mouse_leave"
+					<v-img
+						:src="auction.img"
+						class="white--text align-end purple"
+						gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
+						height="150px"
 					>
-						<v-img
-							:src="auction.img"
-							class="white--text align-end purple"
-							gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-							height="150px"
-						>
-							<v-card-title
-								style="word-break: break-word"
-								v-text="auction.item_name"
-							/>
-						</v-img>
-						<div class="my-4 subtitle-1">
-							{{ (auction.end - new Date().getTime()) > 3000 ? (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) > 24 ? Math.floor((auction.end - new Date().getTime()) / 1000 / 3600 / 24) + " day" + (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600 / 24) > 1 ? "s" : "") : (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 3600)).padStart(2, "0") + "h" : "") + (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) || Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60)).padStart(2, "0") + "m" : "") + ("" + Math.floor((auction.end - new Date().getTime()) / 1000 % 60)).padStart(2, "0") + "s") : (auction.end - new Date().getTime()) > 0 ? "Soon" : "Ended!" }}
-						</div>
-						<v-divider class="mx-4" />
-						<v-card-actions>
-							<span v-if="$vuetify.theme.dark" style="color: #ffaa00">₡{{ ("" + (auction.highest_bid_amount || auction.starting_bid)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') }}</span>
-							<span v-else>₡{{ ("" + (auction.highest_bid_amount || auction.starting_bid)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') }}</span>
-							<v-spacer />
-							<v-btn icon>
-								<v-icon>mdi-heart</v-icon>
-							</v-btn>
-						</v-card-actions>
-						<div class="item_lore" style="position: fixed; visibility: hidden;" v-html="lore_converter(auction.item_name, auction.tier, auction.item_lore)"></div>
-					</v-card>
-				</v-col>
-			</v-row>
+						<v-card-title
+							style="word-break: break-word"
+							v-text="auction.item_name"
+						/>
+					</v-img>
+					<div class="my-4 subtitle-1">
+						{{ (auction.end - new Date().getTime()) > 3000 ? (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) > 24 ? Math.floor((auction.end - new Date().getTime()) / 1000 / 3600 / 24) + " day" + (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600 / 24) > 1 ? "s" : "") : (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 3600)).padStart(2, "0") + "h" : "") + (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) || Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60)).padStart(2, "0") + "m" : "") + ("" + Math.floor((auction.end - new Date().getTime()) / 1000 % 60)).padStart(2, "0") + "s") : (auction.end - new Date().getTime()) > 0 ? "Soon" : "Ended!" }}
+					</div>
+					<v-divider class="mx-4" />
+					<v-card-actions>
+						<span v-if="$vuetify.theme.dark" style="color: #ffaa00">₡{{ ("" + (auction.highest_bid_amount || auction.starting_bid)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') }}</span>
+						<span v-else>₡{{ ("" + (auction.highest_bid_amount || auction.starting_bid)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') }}</span>
+						<v-spacer />
+						<v-btn icon>
+							<v-icon>mdi-heart</v-icon>
+						</v-btn>
+					</v-card-actions>
+					<div class="item_lore" style="position: fixed; visibility: hidden;" v-html="lore_converter(auction.item_name, auction.tier, auction.item_lore)"></div>
+				</v-card>
+			</v-col>
+		</v-row>
+		<v-row>
+			<v-col :cols="12">
+				<v-pagination
+					v-model="page"
+					:total-visible="7"
+					:length="totalPages"
+				/>
+			</v-col>
+		</v-row>
     </v-container>
 </template>
 
@@ -54,7 +72,14 @@ export default {
     data: function () {
     	return {
 			cards: [],
+			totalPages: 1,
+			page: 1,
     	};
+	},
+	watch: {
+		page: async function () {
+			await this.update_cards();
+		}
 	},
 	methods: {
 		mouse_enter: function (e) {
@@ -112,16 +137,21 @@ export default {
 				.replace(/\r?\n/g, "<br />");
 				
 		},
+		update_cards: async function () { console.log("updating");
+			let query = this.query ? this.query.trim() : null;
+			query = query ? (
+				/^>|^sort:|^query:|^seller:|^name:|^lore:|^tier:|^price:|^page:|^state:|^reforge:|^potato:/.test(query.trim())
+			) ? query : `name:"${query}" sort:time.asc state:open` : query;
+			if (query) {
+				this.$router.replace("/search?query=" + query + (this.page !== undefined ? `&page=${this.page - 1}` : ""));
+			}
+			this.$data.cards = (await this.$axios.get("/api/v1/search?query=" + (query || "sort:price.desc") + (this.page !== undefined ? `&page=${this.page - 1}` : ""))).data;
+			this.$data.totalPages = (await this.$axios.get("/api/v1/search/total?query=" + (query || "sort:price.desc"))).data.totalPages;
+			console.log(this.$data.totalPages, (await this.$axios.get("/api/v1/search/total?query=" + (query || "sort:price.desc"))).data);
+		},
 	},
 	created: async function () {
-		let query = this.query ? this.query.trim() : null;
-		query = query ? (
-			/^>|^sort:|^query:|^seller:|^name:|^lore:|^tier:|^price:|^page:|^state:|^reforge:|^potato:/.test(query.trim())
-		) ? query : `name:"${query}" sort:time.asc state:open` : query;
-		if (query) {
-			this.$router.replace("/search?query=" + query);
-		}
-		this.$data.cards = (await this.$axios.get("/api/v1/search?query=" + (query || "sort:price.desc"))).data;
+		await this.update_cards();
 		setInterval(() =>  {
 			this.$forceUpdate();
 		}, 500);
