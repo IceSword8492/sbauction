@@ -137,7 +137,7 @@ export default {
 				.replace(/\r?\n/g, "<br />");
 				
 		},
-		update_cards: async function () { console.log("updating");
+		update_cards: async function () {
 			let query = this.query ? this.query.trim() : null;
 			query = query ? (
 				/^>|^sort:|^query:|^seller:|^name:|^lore:|^tier:|^price:|^page:|^state:|^reforge:|^potato:/.test(query.trim())
