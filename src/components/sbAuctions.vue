@@ -116,8 +116,8 @@ export default {
 	created: async function () {
 		let query = this.query ? this.query.trim() : null;
 		query = query ? (
-			/^>|^sort:|^(?:(?!::).)*::|^seller:|^name:|^lore:|^tier:|^price:|^page:|^state:|^reforge:|^potato:/.test(query)
-		) ? query : `name:/${query}/i` : query;
+			/^>|^sort:|^query:|^seller:|^name:|^lore:|^tier:|^price:|^page:|^state:|^reforge:|^potato:/.test(query.trim())
+		) ? query : `name:"${query}"` : query;
 		if (query) {
 			this.$router.replace("/search?query=" + query);
 		}
