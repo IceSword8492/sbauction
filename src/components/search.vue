@@ -167,7 +167,7 @@
                 </div>
             </v-expand-transition>
         </v-card>
-        <sb-auctions :query="search_main" />
+        <sb-auctions />
     </v-container>
 </template>
 
@@ -181,6 +181,7 @@ export default {
     data: function () {
         return {
             search_main: "",
+            query: "",
             price: [0, 100000],
             priceChanged: false,
             tier: null,
@@ -283,7 +284,8 @@ export default {
     },
     methods: {
         exec_search: function () {
-            location.href = ("/search?" + new URLSearchParams({query: this.search_main}));
+            this.$router.push("/search?" + new URLSearchParams({query: this.search_main}));
+            this.query = this.search_main;
         },
         exec_search_ctrl: function (e) {
             if (e.ctrlKey) {

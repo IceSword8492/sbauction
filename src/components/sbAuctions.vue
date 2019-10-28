@@ -66,21 +66,22 @@
 
 <script>
 export default {
-	props: {
-		query: String,
-	},
     data: function () {
     	return {
 			cards: [],
 			totalPages: 1,
 			page: 1,
-			user: this.$mcid
+			user: this.$mcid,
+			query: "",
     	};
 	},
 	watch: {
 		page: async function () {
 			await this.update_cards();
-		}
+		},
+		query: async function () {
+			await this.update_cards();
+		},
 	},
 	methods: {
 		mouse_enter: function (e) {
@@ -139,12 +140,12 @@ export default {
 				
 		},
 		update_cards: async function () {
-			let query = this.query ? this.query.trim() : null;
+			let query = this.$route.query.query ? this.$route.query.query.trim() : null;
 			query = query ? (
 				/^>|^sort:|^query:|^seller:|^name:|^lore:|^tier:|^price:|^page:|^state:|^reforge:|^potato:/.test(query.trim())
 			) ? query : `name:"${query}" sort:time.asc state:open` : query;
 			if (query) {
-				this.$router.replace("/search?query=" + query + (this.page !== undefined ? `&page=${this.page - 1}` : ""));
+				this.$router.replace("/search?query=" + query + (this.page !== undefined ? `&page=${this.page - 1}` : "")).catch(() => null);
 			}
 			this.$data.cards = (await this.$axios.get("/api/v1/search?query=" + (query || "sort:price.desc") + (this.page !== undefined ? `&page=${this.page - 1}` : ""))).data;
 			this.$data.totalPages = (await this.$axios.get("/api/v1/search/total?query=" + (query || "sort:price.desc"))).data.totalPages;
@@ -154,6 +155,7 @@ export default {
 		await this.update_cards();
 		setInterval(() =>  {
 			this.$forceUpdate();
+			this.query = this.$route.query;
 		}, 1000);
 	},
 }

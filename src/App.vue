@@ -128,11 +128,7 @@ export default {
     },
     methods: {
         exec_search: function () {
-            if (this.$route.path.indexOf("/search") !== 0) {
-                this.$router.push("/search?query=" + this.search);
-            } else {
-                location.href = "/search?query=" + this.search;
-            }
+            this.$router.push("/search?query=" + this.search);
         },
         keyPress: function (e) {
             console.log(e);
