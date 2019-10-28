@@ -61,6 +61,12 @@
 				/>
 			</v-col>
 		</v-row>
+        <div class="progress-circular" v-if="$loading">
+            <v-progress-circular
+                indeterminate
+                color="primary"
+            />
+        </div>
     </v-container>
 </template>
 
@@ -140,6 +146,7 @@ export default {
 				
 		},
 		update_cards: async function () {
+			this.$loading = true;
 			let query = this.$route.query.query ? this.$route.query.query.trim() : null;
 			query = query ? (
 				/^>|^sort:|^query:|^seller:|^name:|^lore:|^tier:|^price:|^page:|^state:|^reforge:|^potato:/.test(query.trim())
@@ -149,6 +156,7 @@ export default {
 			}
 			this.$data.cards = (await this.$axios.get("/api/v1/search?query=" + (query || "sort:price.desc") + (this.page !== undefined ? `&page=${this.page - 1}` : ""))).data;
 			this.$data.totalPages = (await this.$axios.get("/api/v1/search/total?query=" + (query || "sort:price.desc"))).data.totalPages;
+			this.$loading = false;
 		},
 	},
 	created: async function () {
@@ -160,3 +168,12 @@ export default {
 	},
 }
 </script>
+
+<style lang="scss">
+.progress-circular {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    pointer-events: none;
+}
+</style>

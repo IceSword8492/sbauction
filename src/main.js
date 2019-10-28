@@ -17,6 +17,7 @@ Vue.config.productionTip = false;
 Vue.prototype.$axios = axios;
 Vue.prototype.$push = push;
 Vue.prototype.$e = {}; // for event listeners
+Vue.prototype.$loading = false;
 
 Vue.use(Router);
 Vue.use(Vuetify);
