@@ -19,6 +19,22 @@
             <v-spacer />
             <v-btn @click="login" text large>Login</v-btn>
         </v-card-actions>
+        <v-snackbar
+            v-model="alert"
+            top
+            right
+            color="error"
+            :timeout="6000"
+        >
+            Invalid user name.
+            <v-btn
+                dark
+                text
+                @click="alert = false"
+            >
+                <v-icon>mdi-close</v-icon>
+            </v-btn>
+        </v-snackbar>
     </v-card>
 </template>
 
@@ -27,7 +43,8 @@ export default {
     data: function () {
         return {
             mcid: "",
-            errorMcid: ""
+            errorMcid: "",
+            alert: false,
         };
     },
     methods: {
@@ -42,7 +59,7 @@ export default {
                 // this.$router.push("/");
                 location.href = "/";
             } else {
-                alert("f");
+                this.alert = true;
                 return false;
             }
         }

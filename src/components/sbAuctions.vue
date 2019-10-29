@@ -20,36 +20,47 @@
 				:lg="2"
 				ref="cards"
 			>
-				<v-card
-					style="width: 100%;"
-					@mouseenter="mouse_enter"
-					@mouseleave="mouse_leave"
-				>
-					<v-img
-						:src="auction.img"
-						class="white--text align-end purple"
-						gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-						height="150px"
+				<v-hover v-slot:default="{ hover }">
+					<v-card
+						style="width: 100%;"
+						@mouseenter="mouse_enter"
+						@mouseleave="mouse_leave"
 					>
-						<v-card-title
-							style="word-break: break-word"
-							v-text="auction.item_name"
-						/>
-					</v-img>
-					<div class="my-4 subtitle-1">
-						{{ (auction.end - new Date().getTime()) > 3000 ? (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) > 24 ? Math.floor((auction.end - new Date().getTime()) / 1000 / 3600 / 24) + " day" + (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600 / 24) > 1 ? "s" : "") : (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 3600)).padStart(2, "0") + "h" : "") + (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) || Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60)).padStart(2, "0") + "m" : "") + ("" + Math.floor((auction.end - new Date().getTime()) / 1000 % 60)).padStart(2, "0") + "s") : (auction.end - new Date().getTime()) > 0 ? "Soon" : "Ended!" }}
-					</div>
-					<v-divider class="mx-4" />
-					<v-card-actions>
-						<span v-if="$vuetify.theme.dark" style="color: #ffaa00">₡{{ ("" + (auction.highest_bid_amount || auction.starting_bid)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') }}</span>
-						<span v-else>₡{{ ("" + (auction.highest_bid_amount || auction.starting_bid)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') }}</span>
-						<v-spacer />
-						<v-btn icon v-if="user">
-							<v-icon>mdi-heart</v-icon>
-						</v-btn>
-					</v-card-actions>
-					<div class="item_lore" style="position: fixed; visibility: hidden;" v-html="lore_converter(auction.item_name, auction.tier, auction.item_lore)"></div>
-				</v-card>
+						<v-img
+							:src="auction.img"
+							class="white--text align-end purple"
+							gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
+							height="150px"
+						>
+							<v-card-title
+								style="word-break: break-word"
+								v-text="auction.item_name"
+							/>
+							<v-expand-transition>
+								<div
+									v-if="hover"
+									class="d-flex transition-fast-in-fast-out grey darken-2 v-card--reveal display-3 white--text"
+									style="height: 100%;"
+								>
+									{{ auction.bid > 1 ? `${auction.bid}bids` : `${auction.bid}bid` }}
+								</div>
+							</v-expand-transition>
+						</v-img>
+						<div class="my-4 subtitle-1">
+							{{ (auction.end - new Date().getTime()) > 3000 ? (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) > 24 ? Math.floor((auction.end - new Date().getTime()) / 1000 / 3600 / 24) + " day" + (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600 / 24) > 1 ? "s" : "") : (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 3600)).padStart(2, "0") + "h" : "") + (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) || Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60)).padStart(2, "0") + "m" : "") + ("" + Math.floor((auction.end - new Date().getTime()) / 1000 % 60)).padStart(2, "0") + "s") : (auction.end - new Date().getTime()) > 0 ? "Soon" : "Ended!" }}
+						</div>
+						<v-divider class="mx-4" />
+						<v-card-actions>
+							<span v-if="$vuetify.theme.dark" style="color: #ffaa00">₡{{ ("" + (auction.highest_bid_amount || auction.starting_bid)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') }}</span>
+							<span v-else>₡{{ ("" + (auction.highest_bid_amount || auction.starting_bid)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') }}</span>
+							<v-spacer />
+							<v-btn icon v-if="user">
+								<v-icon>mdi-heart</v-icon>
+							</v-btn>
+						</v-card-actions>
+						<div class="item_lore" style="position: fixed; visibility: hidden;" v-html="lore_converter(auction.item_name, auction.tier, auction.item_lore)"></div>
+					</v-card>
+				</v-hover>
 			</v-col>
 		</v-row>
 		<v-row>
@@ -154,8 +165,8 @@ export default {
 			if (query) {
 				this.$router.replace("/search?query=" + query + (this.page !== undefined ? `&page=${this.page - 1}` : "")).catch(() => null);
 			}
-			this.$data.cards = (await this.$axios.get("/api/v1/search?query=" + (query || "sort:price.desc") + (this.page !== undefined ? `&page=${this.page - 1}` : ""))).data;
-			this.$data.totalPages = (await this.$axios.get("/api/v1/search/total?query=" + (query || "sort:price.desc"))).data.totalPages;
+			this.$data.cards = (await this.$axios.get("/api/v1/search?query=" + (query || "sort:price.desc state:open") + (this.page !== undefined ? `&page=${this.page - 1}` : ""))).data;
+			this.$data.totalPages = (await this.$axios.get("/api/v1/search/total?query=" + (query || "sort:price.desc state:open"))).data.totalPages;
 			this.$loading = false;
 		},
 	},
@@ -175,5 +186,15 @@ export default {
     bottom: 20px;
     right: 20px;
     pointer-events: none;
+}
+
+.v-card--reveal {
+  align-items: center;
+  bottom: 0;
+  justify-content: center;
+  opacity: .5;
+  position: absolute;
+  width: 100%;
+  pointer-events: none;
 }
 </style>

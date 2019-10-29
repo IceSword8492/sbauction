@@ -132,21 +132,6 @@
                             </v-col>
                             <v-col :cols="6">
                                 <v-card-title>
-                                    Potato
-                                </v-card-title>
-                                <v-card-text>
-                                    <v-autocomplete
-                                        v-model="selectedPotatoes"
-                                        :items="potatoes"
-                                        label="Potato"
-                                        multiple
-                                        chips
-                                        hide-selected
-                                    />
-                                </v-card-text>
-                            </v-col>
-                            <v-col :cols="6">
-                                <v-card-title>
                                     State
                                 </v-card-title>
                                 <v-card-text>
@@ -160,6 +145,21 @@
                                             <v-radio label="Ended" value="ended" />
                                         </v-radio-group>
                                     </v-container>
+                                </v-card-text>
+                            </v-col>
+                            <v-col :cols="6">
+                                <v-card-title>
+                                    Potato
+                                </v-card-title>
+                                <v-card-text>
+                                    <v-autocomplete
+                                        v-model="selectedPotatoes"
+                                        :items="potatoes"
+                                        label="Potato"
+                                        multiple
+                                        chips
+                                        hide-selected
+                                    />
                                 </v-card-text>
                             </v-col>
                         </v-row>

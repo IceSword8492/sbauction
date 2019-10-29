@@ -96,11 +96,6 @@
             </v-list>
         </v-navigation-drawer>
         <main class="py-4">
-            <!-- <div class="container">
-                <div class="row justify-content-center">
-                    <router-view />
-                </div>
-            </div> -->
             <v-container id="custom-container" fluid>
                 <v-row>
                     <router-view />
