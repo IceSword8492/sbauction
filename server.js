@@ -46,7 +46,7 @@ const server = http.createServer(async (request, response) => {
     }
     if (path.indexOf("/api/v1/search/total") === 0) {
         let query = urlInfo.query.query || "";
-        let res = await rp.get("https://sbauctionserver.glitch.me/api/v1/search/total?query=" + query);
+        let res = await rp.get("http://34.82.10.51/api/v1/search/total?query=" + query);
         response.writeHead(200, {"Content-Type": "application/json"});
         response.write(res);
         response.end();
@@ -55,7 +55,7 @@ const server = http.createServer(async (request, response) => {
     if (path.indexOf("/api/v1/search") === 0) {
         let query = urlInfo.query.query || "";
         let page = Math.abs(parseInt("0" + urlInfo.query.page));
-        let res = await rp.get("https://sbauctionserver.glitch.me/api/v1/search?query=" + query + "&page=" + page);
+        let res = await rp.get("http://34.82.10.51/api/v1/search?query=" + query + "&page=" + page);
         response.writeHead(200, {"Content-Type": "application/json"});
         response.write(res);
         response.end();

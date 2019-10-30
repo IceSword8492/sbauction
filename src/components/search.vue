@@ -267,7 +267,7 @@ export default {
                 this.$data.tier && this.$data.tier !== "all" ? "tier:" + this.$data.tier : "",
                 this.$data.priceChanged ? "price:" + this.$data.price[0] + "-" + this.$data.price[1] : "",
                 this.$data.sort ? "sort:" + this.$data.sort : "",
-                this.$data.selectedReforges.length ? "reforge:\"" + this.$data.selectedReforges.map(reforge => reforge + " [^D][^r][^a][^g][^o][^n]*,Very " + reforge + "*").join(",") + "\"" : "",
+                this.$data.selectedReforges.length ? "reforge:\"" + this.$data.selectedReforges.join(",") + "\"" : "",
                 this.$data.selectedPotatoes.length ? "potato:" + this.$data.selectedPotatoes.map(potato => "(" + potato.replace(/\+/g, "_") + ")").join(",") : "",
                 this.$data.state ? "state:" + this.$data.state : "",
             ].filter(part => part.length).join(" ");
