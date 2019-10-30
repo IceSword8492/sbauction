@@ -46,7 +46,7 @@ async function main (argc, argv) {
         try {
             log = JSON.parse(fs.readFileSync(__dirname + "/log.json", "utf8"));
         } catch {
-            console.log();
+            console.log("\n\u001b[31mError\u001b[0m 初期化が必要です");
             return;
         }
         console.log("\u001b[32m適用済\u001b[0m\n" + log.applied.join("\n") + "\n\u001b[31m未適用\u001b[0m\n" + log.added.join("\n"));
