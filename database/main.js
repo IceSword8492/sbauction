@@ -45,7 +45,10 @@ async function main (argc, argv) {
         let log = {added: [], applied: []};
         try {
             log = JSON.parse(fs.readFileSync(__dirname + "/log.json", "utf8"));
-        } catch {}
+        } catch {
+            console.log();
+            return;
+        }
         console.log("\u001b[32m適用済\u001b[0m\n" + log.applied.join("\n") + "\n\u001b[31m未適用\u001b[0m\n" + log.added.join("\n"));
         console.log("\u001b[0m");
         return;
@@ -74,9 +77,22 @@ async function main (argc, argv) {
         }
         return;
     }
-    console.log(`usage\tnpm run <subcommand>
-\tnode . <subcommand>
+    if (argv[2] === "init") {
+        try {
+            fs.accessSync(__dirname + "/log.json");
+            console.log("\u001b[31mError\u001b[0m log.jsonを削除してください");
+        } catch {
+            let log = {added: [], applied: []};
+            let dir = fs.readdirSync(__dirname + "/history");
+            log.added = dir.map(sql => sql.substring(0, sql.lastIndexOf(".")));
+            fs.writeFileSync(__dirname + "/log.json", JSON.stringify(log, 0, 4));
+            console.log("\u001b[32m初期化処理が完了しました\u001b[0m");
+        }
+        return;
+    }
+    console.log(`usage:\tnode . <subcommand>
 subcommands:
+\tinit\t\t\tinitialize
 \tadd\t\t\tadd patch to history
 \tapply\t\t\tapply added patches
 \tstatus\t\t\tshow status
