@@ -82,9 +82,9 @@ export default {
             this.tab = this.tab || 0;
             this.$router.replace(this.$route.path + "?tab=" + this.tabs[this.tab]).catch(() => null);
         },
-        theme: async function () {console.log((await this.$axios.get(`/api/v1/user/${this.$mcid}/theme`)).data);
-            this.$axios.get("/api/v1/user/" + this.$mcid + "/theme?theme=" + this.theme);
-            this.$vuetify.theme.dark = this.theme;console.log((await this.$axios.get(`/api/v1/user/${this.$mcid}/theme`)).data);
+        theme: async function () {
+            await this.$axios.get("/api/v1/user/" + this.$mcid + "/theme?theme=" + this.theme);
+            this.$vuetify.theme.dark = this.theme;
         },
     },
     methods: {
