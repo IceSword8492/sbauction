@@ -28,17 +28,68 @@
                                         >
                                             general
                                         </v-card-text>
-
                                         <v-card-text
-                                            v-if="tab === 5"
+                                            v-if="tab === 1"
+                                        >
+                                            <sb-auction :watch_flag="watch_flag" :watch_list="watch_list" />
+                                        </v-card-text>
+                                        <v-card-text
+                                            v-if="tab === 4"
                                         >
                                             <v-card-subtitle>
                                                 Theme
                                             </v-card-subtitle>
-                                            <v-radio-group v-model="theme" row>
+                                            <v-radio-group v-model="theme" row class="setting_radio">
                                                 <v-radio label="Light" />
                                                 <v-radio label="Dark" />
                                             </v-radio-group>
+                                            <v-card-subtitle>
+                                                Notification
+                                            </v-card-subtitle>
+                                            <v-container fluid>
+                                                <v-row>
+                                                    <v-col :cols="2">
+                                                        <v-switch
+                                                            :inset="true"
+                                                            label="Enable"
+                                                            v-model="notif_enable"
+                                                        />
+                                                    </v-col>
+                                                    <v-col :cols="2">
+                                                        <v-checkbox label="Item name" />
+                                                    </v-col>
+                                                    <v-col :cols="2">
+                                                        <v-checkbox label="Amount" disabled />
+                                                    </v-col>
+                                                    <v-col :cols="2">
+                                                        <v-checkbox label="Time" />
+                                                    </v-col>
+                                                    <v-col :cols="2">
+                                                        <v-checkbox label="Price" />
+                                                    </v-col>
+                                                    <v-col :cols="2">
+                                                        <v-checkbox label="Bids" />
+                                                    </v-col>
+                                                    <v-col :cols="2">
+                                                        <v-checkbox label="Average" disabled />
+                                                    </v-col>
+                                                    <v-col :cols="2">
+                                                        <v-checkbox label="Diff from average" disabled />
+                                                    </v-col>
+                                                    <v-col :cols="2">
+                                                        <v-checkbox label="Anvil uses" disabled />
+                                                    </v-col>
+                                                    <v-col :cols="2">
+                                                        <v-checkbox label="Highest bidder name" disabled />
+                                                    </v-col>
+                                                    <v-col :cols="2">
+                                                        <v-checkbox label="Seller name" disabled />
+                                                    </v-col>
+                                                    <v-col :cols="2">
+                                                        <v-checkbox label="うんちぶりぶり.com" />
+                                                    </v-col>
+                                                </v-row>
+                                            </v-container>
                                         </v-card-text>
                                     </v-card>
                                 </v-col>
@@ -52,14 +103,18 @@
 </template>
 
 <script>
+import sbAuction from "./sbAuctions.vue"
+
 export default {
+    components: {
+        sbAuction
+    },
     data: function () {
         return {
             tab: 0,
             tabs: [
                 "General",
                 "Watch",
-                "Notification",
                 "Query",
                 "Script",
                 "Setting",
@@ -75,6 +130,9 @@ export default {
             ],
             tab: 0,
             theme: 0,
+            watch_flag: true,
+            watch_list: [],
+            notif_enable: true,
         };
     },
     watch: {
@@ -86,6 +144,10 @@ export default {
             await this.$axios.get("/api/v1/user/" + this.$mcid + "/theme?theme=" + this.theme);
             this.$vuetify.theme.dark = this.theme;
         },
+        notif_enable: async function () {console.log("update", this.notif_enable)
+            this.notif_enable = (await this.$axios.get(`/api/v1/user/${this.$mcid}/notif?enabled=${~~this.notif_enable}`)).data.enabled;
+            console.log(this.notif_enable)
+        }
     },
     methods: {
 
@@ -94,6 +156,16 @@ export default {
         let tab = this.$route.query.tab || "General";
         this.tab = (this.tabs.map((t, i) => ({tab: t, index: i})).find(t => t.tab.toLowerCase() === tab.toLowerCase()) || {index: 0}).index;
         this.theme = (await this.$axios.get(`/api/v1/user/${this.$mcid}/theme`)).data;
+        this.watch_list = (await this.$axios.get(`/api/v1/user/${this.$mcid}/watch`)).data;
+        console.log("init", this.notif_enable, (await this.$axios.get(`/api/v1/user/${this.$mcid}/notif`)).data.enabled)
+        this.notif_enable = (await this.$axios.get(`/api/v1/user/${this.$mcid}/notif`)).data.enabled;
+        console.log("init", this.notif_enable)
     },
 }
 </script>
+
+<style lang="scss">
+.setting_radio {
+    margin: 0 15px;
+}
+</style>

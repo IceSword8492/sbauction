@@ -60,14 +60,12 @@ async function main (argc, argv) {
                 try {
                     log = JSON.parse(fs.readFileSync(__dirname + "/log.json"));
                 } catch {}
-                if (log.added.indexOf(argv[3]) !== -1) {
-                    log.added.splice(log.added.indexOf(argv[3]), 1);
-                }
-                if (log.applied.indexOf(argv[3]) !== -1) {
-                    log.applied.splice(log.added.indexOf(argv[3]), 1);
-                }
+                log.added = log.added.filter(t => !t.match(new RegExp(argv[3], "g")));
+                log.applied = log.applied.filter(t => !t.match(new RegExp(argv[3], "g")));
+                let ts = log.added.find(t => t.match(new RegExp(argv[3])));
+                ts = ts || log.applied.find(t => t.match(new RegExp(argv[3])));
                 fs.writeFileSync(__dirname + "/log.json", JSON.stringify(log, 0, 4));
-                fs.unlinkSync(__dirname + "/history/" + argv[3] + ".sql");
+                fs.unlinkSync(__dirname + "/history/" + ts + ".sql");
                 console.log("\u001b[32m削除しました\u001b[0m");
             } catch {
                 console.log("\n\u001b[31m削除に失敗しました\u001b[0m");

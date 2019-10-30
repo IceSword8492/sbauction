@@ -30,6 +30,9 @@ router.beforeEach((to, from, next) => {
 			Vue.prototype.$mcid = storageData.auth.mcid;
 			Auth.loggedIn = !!storageData.auth.mcid;
 		}
+		if (storageData.auth.uuid) {
+			Vue.prototype.$uuid = storageData.auth.uuid;
+		}
 	}
 	if (to.matched.some(record => record.meta.requiresAuth) && !Auth.loggedIn) {
 		next({path: "/login", query: {redirect: to.fullPath}});

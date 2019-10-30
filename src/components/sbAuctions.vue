@@ -55,7 +55,8 @@
 							<span v-else>₡{{ ("" + (auction.highest_bid_amount || auction.starting_bid)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') }}</span>
 							<v-spacer />
 							<v-btn icon v-if="user">
-								<v-icon>mdi-heart</v-icon>
+								<v-icon v-if="watch.find(a => auction.uuid === a.auction_uuid)" color="pink" @mouseup="watch_delete" :id="`${auction.uuid}.${auction.end}`">mdi-heart</v-icon>
+								<v-icon v-else @mouseup="watch_add" :id="`${auction.uuid}.${auction.end}`">mdi-heart</v-icon>
 							</v-btn>
 						</v-card-actions>
 						<div class="item_lore" style="position: fixed; visibility: hidden;" v-html="lore_converter(auction.item_name, auction.tier, auction.item_lore)"></div>
@@ -83,6 +84,10 @@
 
 <script>
 export default {
+	props: {
+		watch_list: Array,
+		watch_flag: Boolean,
+	},
     data: function () {
     	return {
 			cards: [],
@@ -90,6 +95,7 @@ export default {
 			page: 1,
 			user: this.$mcid,
 			query: "",
+			watch: [],
     	};
 	},
 	watch: {
@@ -99,8 +105,26 @@ export default {
 		query: async function () {
 			await this.update_cards();
 		},
+		watch: async function () {
+			
+		}
 	},
 	methods: {
+		watch_add: async function (e) {
+			this.watch = (await this.$axios.get(`/api/v1/user/${this.$mcid}/watch`, {
+				params: {
+					auction_uuid: e.target.id.split(".")[0],
+					end: e.target.id.split(".")[1],
+				}
+			})).data;
+		},
+		watch_delete: async function (e) {
+			this.watch = (await this.$axios.get(`/api/v1/user/${this.$mcid}/watch`, {
+				params: {
+					auction_uuid: e.target.id.split(".")[0],
+				}
+			})).data;
+		},
 		mouse_enter: function (e) {
 			document.getElementById("item_lore").innerHTML = e.target.getElementsByClassName("item_lore")[0].innerHTML;
 			document.getElementById("item_lore").style.visibility = "visible";
@@ -158,20 +182,42 @@ export default {
 		},
 		update_cards: async function () {
 			this.$loading = true;
-			let query = this.$route.query.query ? this.$route.query.query.trim() : null;
-			query = query ? (
-				/^>|^sort:|^query:|^seller:|^name:|^lore:|^tier:|^price:|^page:|^state:|^reforge:|^potato:/.test(query.trim())
-			) ? query : `name:"${query}" sort:time.asc state:open` : query;
-			if (query) {
-				this.$router.replace("/search?query=" + query + (this.page !== undefined ? `&page=${this.page - 1}` : "")).catch(() => null);
+			if (this.watch_flag && this.watch_list && this.watch_list.length) {
+				this.watch_list.forEach(watch => {
+					this.$axios.get(`/api/v1/auction/${watch.auction_uuid}`).then(data => {
+						this.cards = this.merge(this.cards, [data.data], "uuid");
+						this.cards = this.cards.sort(this.sort_time_asc);
+					}).catch(console.error);
+				});
+			} else if (!this.watch_flag) {
+				let query = this.$route.query.query ? this.$route.query.query.trim() : null;
+				query = query ? (
+					/^>|^sort:|^query:|^seller:|^name:|^lore:|^tier:|^price:|^page:|^state:|^reforge:|^potato:/.test(query.trim())
+				) ? query : `name:"${query}" sort:time.asc state:open` : query;
+				if (query) {
+					this.$router.replace("/search?query=" + query + (this.page !== undefined ? `&page=${this.page - 1}` : "")).catch(() => null);
+				}
+				this.$data.cards = (await this.$axios.get("/api/v1/search?query=" + (query || "sort:price.desc state:open") + (this.page !== undefined ? `&page=${this.page - 1}` : ""))).data;
+				this.$data.totalPages = (await this.$axios.get("/api/v1/search/total?query=" + (query || "sort:price.desc state:open"))).data.totalPages;
 			}
-			this.$data.cards = (await this.$axios.get("/api/v1/search?query=" + (query || "sort:price.desc state:open") + (this.page !== undefined ? `&page=${this.page - 1}` : ""))).data;
-			this.$data.totalPages = (await this.$axios.get("/api/v1/search/total?query=" + (query || "sort:price.desc state:open"))).data.totalPages;
 			this.$loading = false;
 		},
+		merge: function (a = [], b = [], p) {
+			return Object.values([...a, ...b]
+				.reduce((obj, it) => {
+					obj[it[p]] = it;
+					return obj;
+				}, {}));
+		},
+		sort_time_asc: function (a, b) {
+			return a.end - b.end;
+		}
 	},
 	created: async function () {
 		await this.update_cards();
+		if (this.$mcid) {
+			this.watch = (await this.$axios.get(`/api/v1/user/${this.$mcid}/watch`)).data;
+		}
 		setInterval(() =>  {
 			this.$forceUpdate();
 			this.query = this.$route.query;

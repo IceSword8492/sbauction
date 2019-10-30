@@ -1,7 +1,7 @@
 <template>
     <v-app id="app">
         <nav>
-            <v-toolbar flat dense>
+            <v-toolbar :flat="$vuetify.theme.dark" dense>
                 <v-toolbar-title @click="$route.path !== '/' ? $router.push('/') : null" style="cursor: pointer;">
                     <span class="font-weight-light grey--text">Skyblock</span> <span class="grey--text">Auction</span>
                 </v-toolbar-title>

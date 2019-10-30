@@ -58,6 +58,17 @@ const server = http.createServer(async (request, response) => {
         response.end();
         return;
     }
+    if (/^\/api\/v1\/auction/g.test(path)) {
+        let uuid = /^\/api\/v1\/auction\/(?<uuid>[^/]+)/g.exec(path).groups.uuid;
+        let res = await rp.get("http://34.82.10.51/api/v1/auction/" + uuid).catch(e => {
+            console.error(e);
+            console.log("requested url: http://34.82.10.51/api/v1/auction/" + uuid);
+        });
+        response.writeHead(200, {"Content-Type": "application/json"});
+        response.write(res);
+        response.end();
+        return;
+    }
     if (path.indexOf("/api/v1/search/total") === 0) {
         let query = urlInfo.query.query || "";
         let res = await rp.get("http://34.82.10.51/api/v1/search/total?query=" + query);
@@ -87,6 +98,22 @@ const server = http.createServer(async (request, response) => {
             }
             theme = (await db.get("select * from user left outer join theme on user.uuid = theme.uuid where name = ? or theme.uuid = ?", user, user).catch(console.error) || {theme: 0}).theme;
             res = "" + theme;
+        } else if (option === "watch") {
+            let watch;
+            if (urlInfo.query.auction_uuid && urlInfo.query.end) {
+                await db.run("insert or replace into watch values ((select uuid from user where name = ?), ?, ?, ?)", user, urlInfo.query.auction_uuid, parseInt(urlInfo.query.end), true);
+            } else if (urlInfo.query.auction_uuid) {
+                await db.run("insert or replace into watch (uuid, auction_uuid, enabled) values ((select uuid from user where name = ?), ?, ?)", user, urlInfo.query.auction_uuid, false);
+            }
+            watch = await db.all("select * from watch where uuid = (select uuid from user where name = ?) and enabled = true and end > ?", user, new Date().getTime());
+            res = JSON.stringify(watch);
+        } else if (option === "notif") {
+            let notif;
+            if (urlInfo.query.enabled) {
+                await db.run("insert or replace into notification values ((select uuid from user where name = ?), ?)", user, parseInt(urlInfo.query.enabled || 1));
+            }
+            notif = await db.get("select * from notification where uuid = (select uuid from user where name = ?)", user);
+            res = JSON.stringify(notif);
         }
         response.writeHead(200, {"Content-Type": "application/json"});
         response.write(res);
