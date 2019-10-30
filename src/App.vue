@@ -35,7 +35,7 @@
                             {{ user }} <img :src="`https://avatar.minecraft.jp/${user}/minecraft/l.png`" width="20px" height="20px" style="margin-left: 5px; margin-right: 3px;" /><span class="caret"></span>
                         </v-btn>
                     </template>
-                    <v-list>
+                    <v-list class="center">
                         <v-list-item to="home">
                             <v-list-item-title
                             >Home</v-list-item-title>
@@ -66,6 +66,7 @@
                 <v-list-item-group
                     v-model="group"
                     active-class="text--accent-4"
+                    class="center"
                 >
                     <div style="margin: 10px 0;">
                         <span class="font-weight-light grey--text">Skyblock</span> <span class="grey--text">Auction</span>
@@ -129,7 +130,8 @@ export default {
             console.log(e);
         },
     },
-    created: function () {
+    created: async function () {
+        this.$vuetify.theme.dark = (await this.$axios.get(`/api/v1/user/${this.user}/theme`)).data;
         let stalker = document.createElement("div");
         stalker.id = "stalker";
         stalker.style.zIndex = "9999";
@@ -168,7 +170,7 @@ export default {
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align: center;
+    // text-align: center;
     color: #2c3e50;
 }
 
@@ -256,5 +258,9 @@ export default {
     outline: solid 2px #24015b;
     outline-offset: -4px;
     padding: 5px;
+}
+
+.center {
+	text-align: center;
 }
 </style>

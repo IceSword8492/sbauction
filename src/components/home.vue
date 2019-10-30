@@ -1,45 +1,49 @@
 <template>
-    <v-container fluid="">
+    <v-container fluid>
         <v-row>
             <v-col :cols="12">
                 <v-card>
-                    <v-tabs
-                        v-model="tab"
-                        fixed-tabs
-                    >
-                        <v-tab v-for="tab in tabs" :key="tab">{{ tab }}</v-tab>
-                    </v-tabs>
                     <v-card-text>
-                        <v-tabs-items v-model="tab">
-                            <v-tab-item>
-                                <v-sparkline
-                                    :value="value"
-                                    color="rgba(255, 255, 255, .7)"
-                                    height="100"
-                                    padding="24"
-                                    stroke-linecap="round"
-                                    :smooth="10"
-                                    :line-width=".3"
-                                    :gradient="['#f72047', '#ffd200', '#1feaea']"
-                                    auto-draw
-                                />
-                            </v-tab-item>
-                            <v-tab-item>
-                                <v-card flat>
-                                    <v-card-text>2</v-card-text>
-                                </v-card>
-                            </v-tab-item>
-                            <v-tab-item>
-                                <v-card flat>
-                                    <v-card-text>3</v-card-text>
-                                </v-card>
-                            </v-tab-item>
-                            <v-tab-item>
-                                <v-card flat>
-                                    <v-card-text>4</v-card-text>
-                                </v-card>
-                            </v-tab-item>
-                        </v-tabs-items>
+                        <v-container fluid>
+                            <v-row dense>
+                                <v-col :cols="12" :xs="12" :sm="12" :md="2" :lg="2">
+                                    <v-card outlined>
+                                        <v-list dense>
+                                            <v-list-item-group
+                                                v-model="tab"
+                                            >
+                                                <v-list-item v-for="(tab, i) in tabs" :key="i">
+                                                    <v-list-item-content v-text="tab" />
+                                                </v-list-item>
+                                            </v-list-item-group>
+                                        </v-list>
+                                    </v-card>
+                                </v-col>
+                                <v-spacer />
+                                <v-col :cols="12" :xs="12" :sm="12" :md="9" :lg="9">
+                                    <v-card class="mx-auto" flat>
+                                        <v-card-title v-text="tabs[tab]" />
+                                        <v-card-text
+                                            v-if="tab === 0"
+                                        >
+                                            general
+                                        </v-card-text>
+
+                                        <v-card-text
+                                            v-if="tab === 5"
+                                        >
+                                            <v-card-subtitle>
+                                                Theme
+                                            </v-card-subtitle>
+                                            <v-radio-group v-model="theme" row>
+                                                <v-radio label="Light" />
+                                                <v-radio label="Dark" />
+                                            </v-radio-group>
+                                        </v-card-text>
+                                    </v-card>
+                                </v-col>
+                            </v-row>
+                        </v-container>
                     </v-card-text>
                 </v-card>
             </v-col>
@@ -53,10 +57,12 @@ export default {
         return {
             tab: 0,
             tabs: [
-                "Profile",
+                "General",
+                "Watch",
+                "Notification",
                 "Query",
                 "Script",
-                "Settings"
+                "Setting",
             ],
             value: [
                 423,
@@ -67,13 +73,27 @@ export default {
                 610,
                 760,
             ],
+            tab: 0,
+            theme: 0,
         };
+    },
+    watch: {
+        tab: function () {
+            this.tab = this.tab || 0;
+            this.$router.replace(this.$route.path + "?tab=" + this.tabs[this.tab]).catch(() => null);
+        },
+        theme: function () {
+            this.$axios.get("/api/v1/user/" + this.$mcid + "/theme?theme=" + this.theme);
+            this.$vuetify.theme.dark = this.theme;
+        },
     },
     methods: {
 
     },
-    created: function () {
-        
+    created: async function () {
+        let tab = this.$route.query.tab || "General";
+        this.tab = (this.tabs.map((t, i) => ({tab: t, index: i})).find(t => t.tab.toLowerCase() === tab.toLowerCase()) || {index: 0}).index;
+        this.theme = (await this.$axios.get(`/api/v1/user/${this.$mcid}/theme`)).data;
     },
 }
 </script>

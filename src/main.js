@@ -43,7 +43,7 @@ new Vue({
 	store,
 	vuetify: new Vuetify({
 		theme: {
-			dark: true,
+			dark: false,
 		},
 	}),
 	render: function (h) { return h(App) },

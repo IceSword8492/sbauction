@@ -22,3 +22,4 @@ yarn-error.log*
 
 # Database
 database/main.db
+database/log.json

@@ -57,6 +57,11 @@ export default {
                     uuid: res.data.match(/{{(?<uuid>(?:(?!{{|}}).)+)}}/).groups.uuid,
                 });
                 // this.$router.push("/");
+                await this.$axios.get("/api/v1/auth/login/", {
+                    params: {
+                        name: res.data.match(/<<(?<mcid>(?:(?!<<|>>).)+)>>/).groups.mcid, uuid: res.data.match(/{{(?<uuid>(?:(?!{{|}}).)+)}}/).groups.uuid}
+                    },
+                );
                 location.href = "/";
             } else {
                 this.alert = true;

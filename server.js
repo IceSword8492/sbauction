@@ -4,6 +4,7 @@ const rp = require("request-promise");
 const sqlite = require("sqlite-async");
 const url = require("url");
 const child_process = require("child_process");
+let db;
 
 const server = http.createServer(async (request, response) => {
     let urlInfo = url.parse(request.url, true);
@@ -24,6 +25,19 @@ const server = http.createServer(async (request, response) => {
                 console.log("done");
             });
         });
+    }
+    if (path.indexOf("/api/v1/auth/login") === 0) {
+        if (urlInfo.query.name && urlInfo.query.uuid) {
+            db.run("insert or replace into user values (?, ?)", urlInfo.query.uuid, urlInfo.query.name);
+            response.writeHead(200, {"Content-Type": "application/json"});
+            response.write("success");
+            response.end();
+        } else {
+            response.writeHead(200, {"Content-Type": "application/json"});
+            response.write("failed");
+            response.end();
+        }
+        return;
     }
     if (path.indexOf("/api/v1/auth") === 0) {
         let res = await rp.get("https://api.mojang.com/users/profiles/minecraft/" + request.url.split("/").filter(item => item.length)[request.url.split("/").filter(item => item.length).length - 1]);
@@ -61,6 +75,24 @@ const server = http.createServer(async (request, response) => {
         response.end();
         return;
     }
+    if (/^\/api\/v1\/user\/.+/.test(path)) {
+        let matched = path.match(/\/user\/(?<user>[^/]+)\/(?<option>[^/]+)/);
+        let [user, option] = [matched.groups.user, matched.groups.option];
+        let res = "";
+        if (option === "theme") {
+            let theme;
+            if (urlInfo.query.theme) {
+                theme = parseInt(urlInfo.query.theme);
+                await db.run("insert or replace into theme values (?, ?)", user.length === 32 ? user : (await db.get("select * from user where name = ?", user)).uuid, theme).catch(console.error);
+            }
+            theme = (await db.get("select * from theme left outer join user where name = ? or theme.uuid = ?", user, user).catch(console.error) || {theme: 0}).theme;
+            res = "" + theme;
+        }
+        response.writeHead(200, {"Content-Type": "application/json"});
+        response.write(res);
+        response.end();
+        return;
+    }
     return handler(request, response, {
         public: "./dist",
         rewrites: [
@@ -70,3 +102,5 @@ const server = http.createServer(async (request, response) => {
 });
 
 const listener = server.listen(process.env.PORT || 3000, _ => console.log("listening on port " + listener.address().port));
+
+sqlite.open(__dirname + "/database/main.db").then(d => db = d);
