@@ -131,8 +131,9 @@ export default {
         },
     },
     created: async function () {
-        if (this.user) {
+        if (this.user) { console.log((await this.$axios.get(`/api/v1/user/${this.user}/theme`)).data);
             this.$vuetify.theme.dark = (await this.$axios.get(`/api/v1/user/${this.user}/theme`)).data;
+            console.log((await this.$axios.get(`/api/v1/user/${this.user}/theme`)).data);
         }
         let stalker = document.createElement("div");
         stalker.id = "stalker";

@@ -85,7 +85,7 @@ const server = http.createServer(async (request, response) => {
                 theme = parseInt(urlInfo.query.theme);
                 await db.run("insert or replace into theme values (?, ?)", user.length === 32 ? user : (await db.get("select * from user where name = ?", user)).uuid, theme).catch(console.error);
             }
-            theme = (await db.get("select * from theme left outer join user where name = ? or theme.uuid = ?", user, user).catch(console.error) || {theme: 0}).theme;
+            theme = (await db.get("select * from theme left outer join on user.uuid = theme.uuid user where name = ? or theme.uuid = ?", user, user).catch(console.error) || {theme: 0}).theme;
             res = "" + theme;
         }
         response.writeHead(200, {"Content-Type": "application/json"});
