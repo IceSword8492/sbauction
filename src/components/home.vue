@@ -55,37 +55,37 @@
                                                             v-model="notif_enable"
                                                         />
                                                     </v-col>
-                                                    <v-col :cols="2">
+                                                    <v-col :cols="12">
                                                         <v-checkbox label="Item name" />
                                                     </v-col>
-                                                    <v-col :cols="2">
+                                                    <v-col :cols="12">
                                                         <v-checkbox label="Amount" disabled />
                                                     </v-col>
-                                                    <v-col :cols="2">
+                                                    <v-col :cols="12">
                                                         <v-checkbox label="Time" />
                                                     </v-col>
-                                                    <v-col :cols="2">
+                                                    <v-col :cols="12">
                                                         <v-checkbox label="Price" />
                                                     </v-col>
-                                                    <v-col :cols="2">
+                                                    <v-col :cols="12">
                                                         <v-checkbox label="Bids" />
                                                     </v-col>
-                                                    <v-col :cols="2">
+                                                    <v-col :cols="12">
                                                         <v-checkbox label="Average" disabled />
                                                     </v-col>
-                                                    <v-col :cols="2">
+                                                    <v-col :cols="12">
                                                         <v-checkbox label="Diff from average" disabled />
                                                     </v-col>
-                                                    <v-col :cols="2">
+                                                    <v-col :cols="12">
                                                         <v-checkbox label="Anvil uses" disabled />
                                                     </v-col>
-                                                    <v-col :cols="2">
+                                                    <v-col :cols="12">
                                                         <v-checkbox label="Highest bidder name" disabled />
                                                     </v-col>
-                                                    <v-col :cols="2">
+                                                    <v-col :cols="12">
                                                         <v-checkbox label="Seller name" disabled />
                                                     </v-col>
-                                                    <v-col :cols="2">
+                                                    <v-col :cols="12">
                                                         <v-checkbox label="うんちぶりぶり.com" />
                                                     </v-col>
                                                 </v-row>
@@ -157,9 +157,7 @@ export default {
         this.tab = (this.tabs.map((t, i) => ({tab: t, index: i})).find(t => t.tab.toLowerCase() === tab.toLowerCase()) || {index: 0}).index;
         this.theme = (await this.$axios.get(`/api/v1/user/${this.$mcid}/theme`)).data;
         this.watch_list = (await this.$axios.get(`/api/v1/user/${this.$mcid}/watch`)).data;
-        console.log("init", this.notif_enable, (await this.$axios.get(`/api/v1/user/${this.$mcid}/notif`)).data.enabled)
         this.notif_enable = (await this.$axios.get(`/api/v1/user/${this.$mcid}/notif`)).data.enabled;
-        console.log("init", this.notif_enable)
     },
 }
 </script>
