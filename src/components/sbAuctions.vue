@@ -260,6 +260,9 @@ export default {
 		}
 	},
 	created: async function () {
+		if (this.$route.query.page) {
+			this.page = parseInt(this.$route.query.page) + 1;
+		}
 		await this.update_cards();
 		if (this.$mcid) {
 			this.watch = (await this.$axios.get(`/api/v1/user/${this.$mcid}/watch`)).data;
