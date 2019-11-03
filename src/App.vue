@@ -133,6 +133,9 @@ export default {
         },
     },
     created: async function () {
+        if (!this.$push.Permission.has()) {
+            this.$push.Permission.request(() => null, () => null);
+        }
         if (this.user) {
             this.$vuetify.theme.dark = (await this.$axios.get(`/api/v1/user/${this.user}/theme`)).data;
         }
@@ -183,6 +186,11 @@ export default {
                         }
                         this.$push.create("An auction will be Ending Soon.", {
                             body,
+                            onClick: function () {
+                                window.focus();
+                                this.close();
+                            },
+                            vibrate: [10, 10, 10, 10],
                         });
                         this.$root.$data.$notifications[index].done = true;
                     } else {

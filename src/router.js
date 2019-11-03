@@ -4,6 +4,7 @@ import login from "./components/login.vue"
 import logout from "./components/logout.vue"
 import home from "./components/home.vue"
 import search from "./components/search.vue"
+import auction from "./components/auction.vue"
 
 export default new Router({
     mode: "history",
@@ -33,8 +34,13 @@ export default new Router({
             name: "/home",
             component: home,
             meta: {
-                requiresAuth: true
-            }
+                requiresAuth: true,
+            },
+        },
+        {
+            path: "/auction",
+            name: "/auction",
+            component: auction,
         },
     ]
 });
