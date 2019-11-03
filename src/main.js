@@ -50,4 +50,8 @@ new Vue({
 		},
 	}),
 	render: function (h) { return h(App) },
+	data: {
+		$notifications: [],
+		$notificationSettings: {},
+	},
 }).$mount('#app');

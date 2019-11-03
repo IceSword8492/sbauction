@@ -110,7 +110,32 @@ const server = http.createServer(async (request, response) => {
         } else if (option === "notif") {
             let notif;
             if (urlInfo.query.enabled) {
-                await db.run("insert or replace into notification values ((select uuid from user where name = ?), ?)", user, parseInt(urlInfo.query.enabled || 1));
+                await db.run("insert or ignore into notification (uuid, enabled) values ((select uuid from user where name = ?), ?)", user, urlInfo.query. enabled=== "" + true);
+                await db.run("update notification set enabled = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.enabled === "" + true, user);
+            }
+            if (urlInfo.query.item_name) {
+                await db.run("insert or ignore into notification (uuid, item_name) values ((select uuid from user where name = ?), ?)", user, urlInfo.query.item_name === "" + true);
+                await db.run("update notification set item_name = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.item_name === "" + true, user);
+            }
+            if (urlInfo.query.amount) {
+                await db.run("insert or ignore into notification (uuid, amount) values ((select uuid from user where name = ?), ?)", user, urlInfo.query.amount === "" + true);
+                await db.run("update notification set amount = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.amount === "" + true, user);
+            }
+            if (urlInfo.query.time) {
+                await db.run("insert or ignore into notification (uuid, time) values ((select uuid from user where name = ?), ?)", user, urlInfo.query.time === "" + true);
+                await db.run("update notification set time = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.time === "" + true, user);
+            }
+            if (urlInfo.query.price) {
+                await db.run("insert or ignore into notification (uuid, price) values ((select uuid from user where name = ?), ?)", user, urlInfo.query.price === "" + true);
+                await db.run("update notification set price = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.price === "" + true, user);
+            }
+            if (urlInfo.query.bids) {
+                await db.run("insert or ignore into notification (uuid, bids) values ((select uuid from user where name = ?), ?)", user, urlInfo.query.bids === "" + true);
+                await db.run("update notification set bids = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.bids === "" + true, user);
+            }
+            if (urlInfo.query.anvil_uses) {
+                await db.run("insert or ignore into notification (uuid, anvil_uses) values ((select uuid from user where name = ?), ?)", user, urlInfo.query.anvil_uses === "" + true);
+                await db.run("update notification set anvil_uses = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.anvil_uses === "" + true, user);
             }
             notif = await db.get("select * from notification where uuid = (select uuid from user where name = ?)", user);
             res = JSON.stringify(notif);

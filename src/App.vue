@@ -108,6 +108,7 @@
 
 <script>
 import sbAuctions from "./components/sbAuctions.vue"
+import NBT from "./lib/nbt"
 
 export default {
     name: 'app',
@@ -119,7 +120,7 @@ export default {
             user: this.$mcid,
             drawer: false,
             group: null,
-            search: ""
+            search: "",
         };
     },
     methods: {
@@ -149,6 +150,46 @@ export default {
             stalker.style.transform = `translate(${e.clientX}px,${e.clientY}px)`;
 			document.getElementById("item_lore").style.transform = `translate(${window.innerWidth - (ow + x + 50) < 0 ? window.innerWidth - (ow + x + 50) : 0}px,${window.innerHeight - (oh + y - 30) < 0 ? window.innerHeight - (oh + y - 30) : 0}px)`;
         });
+        if (this.user) {
+            this.$root.$data.$notifications = (await this.$axios.get(`/api/v1/user/${this.$mcid}/watch`)).data;
+            this.$root.$data.$notificationSettings = (await this.$axios.get(`/api/v1/user/${this.$mcid}/notif`)).data || {};
+            for (let key in this.$root.$data.$notificationSettings) {
+                if (key !== "uuid") {
+                    this.$root.$data.$notificationSettings[key] = this.$root.$data.$notificationSettings[key] === 1;
+                }
+            }
+            setInterval(() => {
+                let now = new Date().getTime();
+                this.$root.$data.$notifications.forEach(async (notification, index) => {
+                    if (notification.end - 300000 < now && now < notification.end - 299000 && notification.done !== true && this.$root.$data.$notificationSettings.enabled) {
+                        let settings = this.$root.$data.$notificationSettings;
+                        let auction = (await this.$axios.get("/api/v1/auction/" + notification.auction_uuid).catch()).data;
+                        let nbt = await new NBT(auction.item_bytes).decode();
+						try {
+							auction.anvil_uses = nbt.value.i.value.value[0].tag.value.ExtraAttributes.value.anvil_uses.value;
+						} catch {
+							auction.anvil_uses = -1;
+						}
+						try {
+							auction.amount = nbt.value.i.value.value[0].Count.value;
+						} catch {
+							auction.amount = 1;
+                        }
+                        auction.end = auction.end + 1000;
+                        let body = `${settings.item_name ? auction.item_name + "\n" : ""}${settings.amount ? "Amount: " + auction.amount + " / " : ""}${settings.time ? "Ends in: " + ((auction.end - new Date().getTime()) > 3000 ? (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) > 24 ? Math.floor((auction.end - new Date().getTime()) / 1000 / 3600 / 24) + " day" + (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600 / 24) > 1 ? "s" : "") : (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 3600)).padStart(2, "0") + "h" : "") + (Math.floor((auction.end - new Date().getTime()) / 1000 / 3600) || Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60) ? ("" + Math.floor((auction.end - new Date().getTime()) / 1000 / 60 % 60)).padStart(2, "0") + "m" : "") + ("" + Math.floor((auction.end - new Date().getTime()) / 1000 % 60)).padStart(2, "0") + "s") : (auction.end - new Date().getTime()) > 0 ? "Soon" : "Ended!") + "\n" : ""}${settings.price ? "Price: ₡" + (auction.highest_bid_amount || auction.starting_bid) + "\n" : ""}${settings.bids ? "Bids: " + auction.bid + " " : ""}${settings.anvil_uses && auction.anvil_uses > 0 ? "Anvil uses: " + auction.anvil_uses : ""}`;
+                        if (body.lastIndexOf(" / ") === body.length - 3) {
+                            body = body.slice(0, -3);
+                        }
+                        this.$push.create("An auction will be Ending Soon.", {
+                            body,
+                        });
+                        this.$root.$data.$notifications[index].done = true;
+                    } else {
+                        this.$root.$data.$notifications[index].done = false;
+                    }
+                });
+            }, 500);
+        }
     },
     mounted: function () {
         this.$e.focus_search_bar = (e) => {

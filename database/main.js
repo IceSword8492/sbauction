@@ -29,7 +29,7 @@ async function main (argc, argv) {
         for (let ts of log.added) {
             let sql = fs.readFileSync(__dirname + "/history/" + ts + ".sql", "utf8");
             for (let line of sql.split(/\n/g)) {
-                if (line.trim().length) {
+                if (line.trim().length && line.trim().indexOf("--") !== 0) {
                     await db.run(line);
                 }
             }
@@ -60,12 +60,12 @@ async function main (argc, argv) {
                 try {
                     log = JSON.parse(fs.readFileSync(__dirname + "/log.json"));
                 } catch {}
+                fs.unlinkSync(__dirname + "/history/" + ts + ".sql");
                 log.added = log.added.filter(t => !t.match(new RegExp(argv[3], "g")));
                 log.applied = log.applied.filter(t => !t.match(new RegExp(argv[3], "g")));
                 let ts = log.added.find(t => t.match(new RegExp(argv[3])));
                 ts = ts || log.applied.find(t => t.match(new RegExp(argv[3])));
                 fs.writeFileSync(__dirname + "/log.json", JSON.stringify(log, 0, 4));
-                fs.unlinkSync(__dirname + "/history/" + ts + ".sql");
                 console.log("\u001b[32m削除しました\u001b[0m");
             } catch {
                 console.log("\n\u001b[31m削除に失敗しました\u001b[0m");

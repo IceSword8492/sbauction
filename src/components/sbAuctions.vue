@@ -34,7 +34,7 @@
 						>
 							<v-card-title
 								style="word-break: break-word"
-								v-text="auction.item_name"
+								v-text="auction.item_name + (auction.amount > 1 ? ' ×' + auction.amount : '')"
 							/>
 							<v-expand-transition>
 								<div
@@ -59,7 +59,7 @@
 								<v-icon v-else @mouseup="watch_add" :id="`${auction.uuid}.${auction.end}`">mdi-heart</v-icon>
 							</v-btn>
 						</v-card-actions>
-						<div class="item_lore" style="position: fixed; visibility: hidden;" v-html="lore_converter(auction.item_name, auction.tier, auction.item_lore)"></div>
+						<div class="item_lore" style="position: fixed; visibility: hidden;" v-html="lore_converter(auction.item_name, auction.tier, auction.item_lore, auction.anvil_uses, auction.amount)"></div>
 					</v-card>
 				</v-hover>
 			</v-col>
@@ -83,6 +83,8 @@
 </template>
 
 <script>
+import NBT from "../lib/nbt"
+
 export default {
 	props: {
 		watch_list: Array,
@@ -117,6 +119,7 @@ export default {
 					end: e.target.id.split(".")[1],
 				}
 			})).data;
+			this.$root.$data.$notifications = this.merge(this.$root.$data.notifications, this.watch, "auction_uuid");
 		},
 		watch_delete: async function (e) {
 			this.watch = (await this.$axios.get(`/api/v1/user/${this.$mcid}/watch`, {
@@ -124,6 +127,7 @@ export default {
 					auction_uuid: e.target.id.split(".")[0],
 				}
 			})).data;
+			this.$root.$data.$notifications = this.$root.$data.$notifications.filter(notification => notification.auction_uuid !== e.target.id.split(".")[0]);
 		},
 		mouse_enter: function (e) {
 			document.getElementById("item_lore").innerHTML = e.target.getElementsByClassName("item_lore")[0].innerHTML;
@@ -132,7 +136,7 @@ export default {
 		mouse_leave: function (e) {
 			document.getElementById("item_lore").style.visibility = "hidden";
 		},
-		lore_converter: function (name, tier, lore) {
+		lore_converter: function (name, tier, lore, anvil = -1, amount = 1) {
 			let tier_color = "§r";
 			switch (tier.toLowerCase()) {
 			case "common":
@@ -154,7 +158,7 @@ export default {
 				tier_color = "§d";
 				break;
 			}
-			return ((tier_color) + name + "\n\n" + lore)
+			return ((tier_color) + name + (amount > 1 ? " ×" + amount : "") + "\n\n" + (anvil !== -1 ? "§fanvil uses: " + (anvil < 3 ? "" : anvil < 5 ? "§e" : "§c") + anvil + "\n\n§r" : "") + lore)
 				.replace(/§k((?:(?!§[0-9a-z]).)*)/g, `<span>$1</span>`) // 未対応
 				.replace(/§l((?:(?!§[0-9a-z]).)*)/g, `<span style="font-weight: bold">$1</span>`)
 				.replace(/§m((?:(?!§[0-9a-z]).)*)/g, `<span style="text-decoration: line-through">$1</span>`)
@@ -183,8 +187,19 @@ export default {
 		update_cards: async function () {
 			this.$loading = true;
 			if (this.watch_flag && this.watch_list && this.watch_list.length) {
-				this.watch_list.forEach(watch => {
-					this.$axios.get(`/api/v1/auction/${watch.auction_uuid}`).then(data => {
+				this.watch_list.forEach(async watch => {
+					this.$axios.get(`/api/v1/auction/${watch.auction_uuid}`).then(async data => {
+						let nbt = await new NBT(data.data.item_bytes).decode();
+						try {
+							data.data.anvil_uses = nbt.value.i.value.value[0].tag.value.ExtraAttributes.value.anvil_uses.value;
+						} catch {
+							data.data.anvil_uses = -1;
+						}
+						try {
+							data.data.amount = nbt.value.i.value.value[0].Count.value;
+						} catch {
+							data.data.amount = 1;
+						}
 						this.cards = this.merge(this.cards, [data.data], "uuid");
 						this.cards = this.cards.sort(this.sort_time_asc);
 					}).catch(console.error);
@@ -197,7 +212,21 @@ export default {
 				if (query) {
 					this.$router.replace("/search?query=" + query + (this.page !== undefined ? `&page=${this.page - 1}` : "")).catch(() => null);
 				}
-				this.$data.cards = (await this.$axios.get("/api/v1/search?query=" + (query || "sort:price.desc state:open") + (this.page !== undefined ? `&page=${this.page - 1}` : ""))).data;
+				this.$data.cards = (await this.$axios.get("/api/v1/search?query=" + (query || "sort:price.desc state:open") + (this.page !== undefined ? `&page=${this.page - 1}` : "")).catch(console.error)).data;
+				this.$data.cards.map(async card => {
+					let nbt = await new NBT(card.item_bytes).decode();
+					try {
+						card.anvil_uses = nbt.value.i.value.value[0].tag.value.ExtraAttributes.value.anvil_uses.value;
+					} catch {
+						card.anvil_uses = -1;
+					}
+					try {
+						card.amount = nbt.value.i.value.value[0].Count.value;
+					} catch {
+						card.amount = 1;
+					}
+					return card;
+				});
 				this.$data.totalPages = (await this.$axios.get("/api/v1/search/total?query=" + (query || "sort:price.desc state:open"))).data.totalPages;
 			}
 			this.$loading = false;

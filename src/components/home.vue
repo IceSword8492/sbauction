@@ -48,45 +48,42 @@
                                             </v-card-subtitle>
                                             <v-container fluid>
                                                 <v-row>
-                                                    <v-col :cols="2">
+                                                    <v-col :cols="12">
                                                         <v-switch
                                                             :inset="true"
                                                             label="Enable"
-                                                            v-model="notif_enable"
+                                                            v-model="notificationSettings.enabled"
                                                         />
                                                     </v-col>
-                                                    <v-col :cols="12">
-                                                        <v-checkbox label="Item name" />
+                                                    <v-col :cols="12" :md="4">
+                                                        <v-checkbox label="Item name" v-model="notificationSettings.item_name" />
                                                     </v-col>
-                                                    <v-col :cols="12">
-                                                        <v-checkbox label="Amount" disabled />
+                                                    <v-col :cols="12" :md="4">
+                                                        <v-checkbox label="Amount" v-model="notificationSettings.amount" />
                                                     </v-col>
-                                                    <v-col :cols="12">
-                                                        <v-checkbox label="Time" />
+                                                    <v-col :cols="12" :md="4">
+                                                        <v-checkbox label="Time" v-model="notificationSettings.time" />
                                                     </v-col>
-                                                    <v-col :cols="12">
-                                                        <v-checkbox label="Price" />
+                                                    <v-col :cols="12" :md="4">
+                                                        <v-checkbox label="Price" v-model="notificationSettings.price" />
                                                     </v-col>
-                                                    <v-col :cols="12">
-                                                        <v-checkbox label="Bids" />
+                                                    <v-col :cols="12" :md="4">
+                                                        <v-checkbox label="Bids" v-model="notificationSettings.bids" />
                                                     </v-col>
-                                                    <v-col :cols="12">
+                                                    <v-col :cols="12" :md="4">
                                                         <v-checkbox label="Average" disabled />
                                                     </v-col>
-                                                    <v-col :cols="12">
+                                                    <v-col :cols="12" :md="4">
                                                         <v-checkbox label="Diff from average" disabled />
                                                     </v-col>
-                                                    <v-col :cols="12">
-                                                        <v-checkbox label="Anvil uses" disabled />
+                                                    <v-col :cols="12" :md="4">
+                                                        <v-checkbox label="Anvil uses" v-model="notificationSettings.anvil_uses" />
                                                     </v-col>
-                                                    <v-col :cols="12">
+                                                    <v-col :cols="12" :md="4">
                                                         <v-checkbox label="Highest bidder name" disabled />
                                                     </v-col>
-                                                    <v-col :cols="12">
+                                                    <v-col :cols="12" :md="4">
                                                         <v-checkbox label="Seller name" disabled />
-                                                    </v-col>
-                                                    <v-col :cols="12">
-                                                        <v-checkbox label="うんちぶりぶり.com" />
                                                     </v-col>
                                                 </v-row>
                                             </v-container>
@@ -132,7 +129,7 @@ export default {
             theme: 0,
             watch_flag: true,
             watch_list: [],
-            notif_enable: true,
+            notificationSettings: {},
         };
     },
     watch: {
@@ -144,9 +141,14 @@ export default {
             await this.$axios.get("/api/v1/user/" + this.$mcid + "/theme?theme=" + this.theme);
             this.$vuetify.theme.dark = this.theme;
         },
-        notif_enable: async function () {console.log("update", this.notif_enable)
-            this.notif_enable = (await this.$axios.get(`/api/v1/user/${this.$mcid}/notif?enabled=${~~this.notif_enable}`)).data.enabled;
-            console.log(this.notif_enable)
+        notificationSettings: {
+            handler: async function () {
+                await this.$axios.get(`/api/v1/user/${this.$mcid}/notif`, {
+                    params: this.notificationSettings,
+                });
+                this.$root.$data.$notificationSettings = this.notificationSettings;
+            },
+            deep: true,
         }
     },
     methods: {
@@ -158,6 +160,13 @@ export default {
         this.theme = (await this.$axios.get(`/api/v1/user/${this.$mcid}/theme`)).data;
         this.watch_list = (await this.$axios.get(`/api/v1/user/${this.$mcid}/watch`)).data;
         this.notif_enable = (await this.$axios.get(`/api/v1/user/${this.$mcid}/notif`)).data.enabled;
+        this.notificationSettings = (await this.$axios.get(`/api/v1/user/${this.$mcid}/notif`)).data;
+        for (let key in this.notificationSettings) {
+            if (key !== "uuid") {
+                this.notificationSettings[key] = this.notificationSettings[key] === 1;
+            }
+        }
+        this.$root.$data.$notificationSettings = this.notificationSettings;
     },
 }
 </script>
