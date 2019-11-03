@@ -25,6 +25,7 @@
                     append-icon="mdi-search-web"
                     @click:append="exec_search"
                     @keypress.enter="exec_search"
+                    @keyup.esc="blur_search"
                 />
                 <v-btn class="nav-item hidden-sm-and-down" text v-if="!user || (user && user.length && user.length === 0)" to="/login">
                     <span class="nav-link" to="/login">Login</span>
@@ -127,8 +128,8 @@ export default {
         exec_search: function () {
             this.$router.push("/search?query=" + this.search);
         },
-        keyPress: function (e) {
-            console.log(e);
+        blur_search: function (e) {
+            e.target.blur();
         },
     },
     created: async function () {
