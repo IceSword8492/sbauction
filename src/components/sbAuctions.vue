@@ -79,6 +79,22 @@
                 color="primary"
             />
         </div>
+		<v-snackbar
+            v-model="reload_notif"
+            top
+            right
+            color="success"
+            :timeout="6000"
+        >
+            Reloaded
+            <v-btn
+                dark
+                text
+                @click="reload_notif = false"
+            >
+                <v-icon>mdi-close</v-icon>
+            </v-btn>
+        </v-snackbar>
     </v-container>
 </template>
 
@@ -98,6 +114,7 @@ export default {
 			user: this.$mcid,
 			query: "",
 			watch: [],
+			reload_notif: false,
     	};
 	},
 	watch: {
@@ -251,6 +268,10 @@ export default {
 			this.$forceUpdate();
 			this.query = this.$route.query;
 		}, 1000);
+		setInterval(() => {
+			this.update_cards();
+			this.reload_notif = true;
+		}, 60000);
 	},
 }
 </script>
