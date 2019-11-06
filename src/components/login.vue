@@ -77,6 +77,7 @@ export default {
             }
         });
         if (this.$route.query.user) {
+            this.mcid = this.$route.query.user;
             this.login(this.$route.query.user);
         }
     },
