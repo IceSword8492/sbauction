@@ -48,8 +48,8 @@ export default {
         };
     },
     methods: {
-        login: async function () {
-            let res = await this.$axios.get("/api/v1/auth/" + this.$data.mcid);
+        login: async function (mcid = null) {console.log(mcid)
+            let res = await this.$axios.get("/api/v1/auth/" + (mcid ? mcid : this.$data.mcid));
             if (res.data.indexOf("success") === 0) {
                 this.$store.commit({
                     type: "login",
@@ -76,6 +76,9 @@ export default {
                 this.login();
             }
         });
+        if (this.$route.query.user) {
+            this.login(this.$route.query.user);
+        }
     },
 }
 </script>
