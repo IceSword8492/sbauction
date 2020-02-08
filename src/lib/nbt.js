@@ -7,6 +7,10 @@ export default class NBT {
             src = this.decodeUnicode(src);
             src = Buffer.from(src, "base64");
         }
+        if (!src) {
+            console.error(src);
+            throw new Error('invalid src');
+        }
         src = zlib.gunzipSync(src);
         this.src = src;
     }

@@ -65,7 +65,7 @@ const server = http.createServer(async (request, response) => {
             console.log("requested url: http://34.82.10.51/api/v1/auction/" + uuid);
         });
         response.writeHead(200, {"Content-Type": "application/json"});
-        response.write(res);
+        response.write(JSON.stringify(JSON.parse(res)[0]));
         response.end();
         return;
     }
@@ -94,50 +94,50 @@ const server = http.createServer(async (request, response) => {
             let theme;
             if (urlInfo.query.theme) {
                 theme = parseInt(urlInfo.query.theme);
-                await db.run("insert or replace into theme values (?, ?)", user.length === 32 ? user : (await db.get("select * from user where name = ?", user)).uuid, theme).catch(console.error);
+                await db.run("insert or replace into theme values (?, ?)", user.length === 32 ? user : (await db.get("select * from user where name = ?", user).catch(console.error)).uuid, theme).catch(console.error);
             }
             theme = (await db.get("select * from user left outer join theme on user.uuid = theme.uuid where name = ? or theme.uuid = ?", user, user).catch(console.error) || {theme: 0}).theme;
             res = "" + theme;
         } else if (option === "watch") {
             let watch;
             if (urlInfo.query.auction_uuid && urlInfo.query.end) {
-                await db.run("insert or replace into watch values ((select uuid from user where name = ?), ?, ?, ?)", user, urlInfo.query.auction_uuid, parseInt(urlInfo.query.end), true);
+                await db.run("insert or replace into watch values ((select uuid from user where name = ?), ?, ?, ?)", user, urlInfo.query.auction_uuid, parseInt(urlInfo.query.end), true).catch(console.error);
             } else if (urlInfo.query.auction_uuid) {
-                await db.run("insert or replace into watch (uuid, auction_uuid, enabled) values ((select uuid from user where name = ?), ?, ?)", user, urlInfo.query.auction_uuid, false);
+                await db.run("insert or replace into watch (uuid, auction_uuid, enabled) values ((select uuid from user where name = ?), ?, ?)", user, urlInfo.query.auction_uuid, false).catch(console.error);
             }
-            watch = await db.all("select * from watch where uuid = (select uuid from user where name = ?) and enabled = true and end > ?", user, new Date().getTime());
+            watch = await db.all("select * from watch where uuid = (select uuid from user where name = ?) and enabled = true and end > ?", user, new Date().getTime()).catch(console.error);
             res = JSON.stringify(watch);
         } else if (option === "notif") {
             let notif;
             if (urlInfo.query.enabled) {
-                await db.run("insert or ignore into notification (uuid, enabled) values ((select uuid from user where name = ?), ?)", user, urlInfo.query. enabled=== "" + true);
-                await db.run("update notification set enabled = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.enabled === "" + true, user);
+                await db.run("insert or ignore into notification (uuid, enabled) values ((select uuid from user where name = ?), ?)", user, urlInfo.query.enabled === "" + true).catch(console.error);
+                await db.run("update notification set enabled = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.enabled === "" + true, user).catch(console.error);
             }
             if (urlInfo.query.item_name) {
-                await db.run("insert or ignore into notification (uuid, item_name) values ((select uuid from user where name = ?), ?)", user, urlInfo.query.item_name === "" + true);
-                await db.run("update notification set item_name = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.item_name === "" + true, user);
+                await db.run("insert or ignore into notification (uuid, item_name) values ((select uuid from user where name = ?), ?)", user, urlInfo.query.item_name === "" + true).catch(console.error);
+                await db.run("update notification set item_name = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.item_name === "" + true, user).catch(console.error);
             }
             if (urlInfo.query.amount) {
-                await db.run("insert or ignore into notification (uuid, amount) values ((select uuid from user where name = ?), ?)", user, urlInfo.query.amount === "" + true);
-                await db.run("update notification set amount = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.amount === "" + true, user);
+                await db.run("insert or ignore into notification (uuid, amount) values ((select uuid from user where name = ?), ?)", user, urlInfo.query.amount === "" + true).catch(console.error);
+                await db.run("update notification set amount = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.amount === "" + true, user).catch(console.error);
             }
             if (urlInfo.query.time) {
-                await db.run("insert or ignore into notification (uuid, time) values ((select uuid from user where name = ?), ?)", user, urlInfo.query.time === "" + true);
-                await db.run("update notification set time = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.time === "" + true, user);
+                await db.run("insert or ignore into notification (uuid, time) values ((select uuid from user where name = ?), ?)", user, urlInfo.query.time === "" + true).catch(console.error);
+                await db.run("update notification set time = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.time === "" + true, user).catch(console.error);
             }
             if (urlInfo.query.price) {
-                await db.run("insert or ignore into notification (uuid, price) values ((select uuid from user where name = ?), ?)", user, urlInfo.query.price === "" + true);
-                await db.run("update notification set price = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.price === "" + true, user);
+                await db.run("insert or ignore into notification (uuid, price) values ((select uuid from user where name = ?), ?)", user, urlInfo.query.price === "" + true).catch(console.error);
+                await db.run("update notification set price = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.price === "" + true, user).catch(console.error);
             }
             if (urlInfo.query.bids) {
-                await db.run("insert or ignore into notification (uuid, bids) values ((select uuid from user where name = ?), ?)", user, urlInfo.query.bids === "" + true);
-                await db.run("update notification set bids = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.bids === "" + true, user);
+                await db.run("insert or ignore into notification (uuid, bids) values ((select uuid from user where name = ?), ?)", user, urlInfo.query.bids === "" + true).catch(console.error);
+                await db.run("update notification set bids = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.bids === "" + true, user).catch(console.error);
             }
             if (urlInfo.query.anvil_uses) {
-                await db.run("insert or ignore into notification (uuid, anvil_uses) values ((select uuid from user where name = ?), ?)", user, urlInfo.query.anvil_uses === "" + true);
-                await db.run("update notification set anvil_uses = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.anvil_uses === "" + true, user);
+                await db.run("insert or ignore into notification (uuid, anvil_uses) values ((select uuid from user where name = ?), ?)", user, urlInfo.query.anvil_uses === "" + true).catch(console.error);
+                await db.run("update notification set anvil_uses = ? where uuid = (select uuid from user where name = ?)", urlInfo.query.anvil_uses === "" + true, user).catch(console.error);
             }
-            notif = await db.get("select * from notification where uuid = (select uuid from user where name = ?)", user);
+            notif = await db.get("select * from notification where uuid = (select uuid from user where name = ?)", user).catch(console.error) || {};
             res = JSON.stringify(notif);
         }
         response.writeHead(200, {"Content-Type": "application/json"});

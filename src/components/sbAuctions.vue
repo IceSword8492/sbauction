@@ -205,7 +205,7 @@ export default {
 			this.$loading = true;
 			if (this.watch_flag && this.watch_list && this.watch_list.length) {
 				this.watch_list.forEach(async watch => {
-					this.$axios.get(`/api/v1/auction/${watch.auction_uuid}`).then(async data => {
+					this.$axios.get(`/api/v1/auction/${watch.auction_uuid}`).then(async data => {console.log(data)
 						let nbt = await new NBT(data.data.item_bytes).decode();
 						try {
 							data.data.anvil_uses = nbt.value.i.value.value[0].tag.value.ExtraAttributes.value.anvil_uses.value;
