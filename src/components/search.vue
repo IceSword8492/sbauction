@@ -114,7 +114,7 @@
                                     </v-container>
                                 </v-card-text>
                             </v-col>
-                            <v-col :cols="6">
+                            <!-- <v-col :cols="6">
                                 <v-card-title>
                                     Reforge
                                 </v-card-title>
@@ -161,7 +161,7 @@
                                         hide-selected
                                     />
                                 </v-card-text>
-                            </v-col>
+                            </v-col> -->
                         </v-row>
                     </v-container>
                 </div>

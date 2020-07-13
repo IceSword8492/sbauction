@@ -125,7 +125,7 @@ export default {
 			await this.update_cards();
 		},
 		watch: async function () {
-			
+
 		}
 	},
 	methods: {
@@ -199,7 +199,6 @@ export default {
 				.replace(/§e((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #ffff55">$1</span>`)
 				.replace(/§f((?:(?!§[0-9a-f]).)*)/g, `<span style="color: #ffffff">$1</span>`)
 				.replace(/\r?\n/g, "<br />");
-				
 		},
 		update_cards: async function () {
 			this.$loading = true;
